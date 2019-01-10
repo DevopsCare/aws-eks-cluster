@@ -1,0 +1,31 @@
+alertmanager:
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - alertmanager.atv.riskfocus.com
+  resources:
+     limits:
+       cpu: 10m
+       memory: 32Mi
+     requests:
+       cpu: 10m
+     memory: 32Mi
+
+server:
+  enableAdminApi: true
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - prometheus.atv.riskfocus.com
+  resources:
+     limits:
+       cpu: 500m
+       memory: 1Gi
+     requests:
+       cpu: 500m
+       memory: 512Mi

@@ -1,0 +1,16 @@
+rbac:
+  create: true
+
+sslCertPath: /etc/ssl/certs/ca-bundle.crt
+
+autoDiscovery:
+  enabled: true
+
+priorityClassName: system-cluster-critical
+resources:
+   limits:
+     cpu: 100m
+     memory: 300Mi
+   requests:
+     cpu: 100m
+     memory: 100Mi

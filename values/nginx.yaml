@@ -1,0 +1,41 @@
+rbac:
+  create: true
+
+controller:
+  replicaCount: 1
+
+  config:
+    use-proxy-protocol: "True"
+    proxy-protocol: "True"
+    real-ip-header: "proxy_protocol"
+    set-real-ip-from: "0.0.0.0/0"
+
+  service:
+    targetPorts:
+      http: http
+      https: http
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "tcp"
+
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+#      service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: "ELBSecurityPolicy-TLS-1-2-2017-01"
+      # Defined in .tf, parametrized
+      #      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:XX-XXXX-X:XXXXXXXXX:certificate/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXX
+
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+
+      service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
+      service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled: "true"
+      service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout: "60"
+
+  publishService:
+    enabled: true
+  stats:
+    enabled: true
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
