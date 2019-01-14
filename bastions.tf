@@ -47,7 +47,7 @@ resource "aws_instance" "bastion" {
     "${aws_security_group.bastion_incoming_ssh.id}",
   ]
 
-  key_name  = "RF Sysadmin"
+  key_name  = "${var.key_name}"
   user_data = "${file("${path.module}/files/bastion_ssh_keys.sh")}"
   tags      = "${local.bastion_tags}"
 }
