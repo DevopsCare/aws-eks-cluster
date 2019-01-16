@@ -136,7 +136,7 @@ data "aws_iam_policy_document" "common-s3" {
     ]
 
     resources = [
-      "arn:aws:s3:::${var.org_rev_fqdn}.${var.project_prefix}.common",
+      "arn:aws:s3:::${var.project_rev_fqdn}.common",
     ]
   }
 
@@ -151,7 +151,7 @@ data "aws_iam_policy_document" "common-s3" {
     ]
 
     resources = [
-      "arn:aws:s3:::${var.org_rev_fqdn}.${var.project_prefix}.common/*",
+      "arn:aws:s3:::${var.project_rev_fqdn}.common/*",
     ]
   }
 }

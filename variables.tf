@@ -1,8 +1,8 @@
 variable "aws_region" {}
 variable "aws_profile" {}
 variable "project_prefix" {}
-variable "org_fqdn" {}
-variable "org_rev_fqdn" {}
+variable "project_fqdn" {}
+variable "project_rev_fqdn" {}
 
 variable "ip_whitelist" {
   type    = "list"

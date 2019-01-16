@@ -3,6 +3,8 @@ provider "kubernetes" {
 }
 
 provider "helm" {
+  service_account = "eks-admin"
+
   kubernetes = {
     config_path = "${path.root}/kubeconfig_${local.cluster_name}"
   }
@@ -13,11 +15,20 @@ resource "helm_repository" "coreos" {
   url  = "https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/"
 }
 
-resource "kubernetes_cluster_role_binding" "rbac_kube-system-cluster-admin" {
+resource "kubernetes_service_account" "eks-admin" {
   depends_on = ["module.eks"]
 
   metadata = {
-    name = "cluster-admin--kube-system-default"
+    name      = "eks-admin"
+    namespace = "kube-system"
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
+  depends_on = ["kubernetes_service_account.eks-admin"]
+
+  metadata = {
+    name = "cluster-admin--kube-system-eks-admin"
   }
 
   role_ref = {
@@ -29,7 +40,7 @@ resource "kubernetes_cluster_role_binding" "rbac_kube-system-cluster-admin" {
   subject = {
     api_group = ""
     kind      = "ServiceAccount"
-    name      = "default"
+    name      = "eks-admin"
     namespace = "kube-system"
   }
 }
@@ -61,31 +72,14 @@ resource "helm_release" "auto-scaler" {
 }
 
 resource "helm_release" "kubernetes-dashboard" {
-  depends_on = ["kubernetes_cluster_role_binding.rbac_kube-system-cluster-admin"]
-  name       = "kubernetes-dashboard"
-  chart      = "stable/kubernetes-dashboard"
-  namespace  = "kube-system"
-  values     = ["${file("${path.module}/values/dashboard.yaml")}"]
-
-  lifecycle {
-    ignore_changes = ["keyring"]
-  }
-}
-
-resource "helm_release" "ingress" {
-  name      = "nginx-ingress"
-  chart     = "stable/nginx-ingress"
+  name      = "kubernetes-dashboard"
+  chart     = "stable/kubernetes-dashboard"
   namespace = "kube-system"
-  values    = ["${file("${path.module}/values/nginx.yaml")}"]
+  values    = ["${file("${path.module}/values/dashboard.yaml")}"]
 
   set = {
     name  = "dummy.depends_on"
     value = "${module.eks.cluster_id}"
-  }
-
-  set = {
-    name  = "controller.service.loadBalancerSourceRanges"
-    value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks))}}"
   }
 
   lifecycle {

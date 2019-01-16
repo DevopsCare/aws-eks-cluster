@@ -1,0 +1,13 @@
+config:
+  domain: SET_ME
+  exposer: Ingress
+  http: "true"
+  tlsacme: "false"
+  pathMode: ""
+
+Args:
+  - --v
+  - 4
+Annotations:
+  helm.sh/hook: post-install,post-upgrade
+  helm.sh/hook-delete-policy: hook-succeeded

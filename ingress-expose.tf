@@ -1,0 +1,67 @@
+resource "helm_repository" "jx" {
+  name = "jx"
+  url  = "http://chartmuseum.jenkins-x.io"
+}
+
+resource "helm_release" "ingress" {
+  name      = "nginx-ingress"
+  chart     = "stable/nginx-ingress"
+  namespace = "kube-system"
+  values    = ["${file("${path.module}/values/nginx.yaml")}"]
+
+  set = {
+    name  = "dummy.depends_on"
+    value = "${module.eks.cluster_id}"
+  }
+
+  set = {
+    name  = "controller.service.loadBalancerSourceRanges"
+    value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks))}}"
+  }
+
+  lifecycle {
+    ignore_changes = ["keyring"]
+  }
+}
+
+resource "helm_release" "expose" {
+  name      = "expose"
+  chart     = "jx/exposecontroller"
+  namespace = "kube-system"
+  values    = ["${file("${path.module}/values/expose.yaml")}"]
+
+  set = {
+    name  = "dummy.depends_on"
+    value = "${module.eks.cluster_id}"
+  }
+
+  set = {
+    name  = "config.domain"
+    value = "${var.project_fqdn}"
+  }
+
+  lifecycle {
+    ignore_changes = ["keyring"]
+  }
+}
+
+resource "helm_release" "expose-cleanup" {
+  name      = "expose-cleanup"
+  chart     = "jx/exposecontroller"
+  namespace = "kube-system"
+  values    = ["${file("${path.module}/values/expose-cleanup.yaml")}"]
+
+  set = {
+    name  = "helm_repository.jx"
+    value = "${module.eks.cluster_id}"
+  }
+
+  set = {
+    name  = "helm_repository.jx"
+    value = "${module.eks.cluster_id}"
+  }
+
+  lifecycle {
+    ignore_changes = ["keyring"]
+  }
+}
