@@ -11,6 +11,11 @@ locals {
     Environment = "${var.project_prefix}-infra"
   }
 
+  route53_tags = {
+    Name        = "${var.project_prefix}-dns"
+    Environment = "${var.project_prefix}-infra"
+  }
+
   bastion_tags = {
     Name        = "${var.project_prefix}-eks-bastion"
     Environment = "${var.project_prefix}-infra"

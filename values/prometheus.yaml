@@ -1,10 +1,9 @@
 alertmanager:
-  ingress:
-    enabled: true
+  service:
     annotations:
-      kubernetes.io/ingress.class: nginx
-    hosts:
-      - alertmanager.atv.riskfocus.com
+      fabric8.io/expose: "true"
+      fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+
   resources:
      limits:
        cpu: 10m
@@ -16,12 +15,11 @@ alertmanager:
 server:
   enableAdminApi: true
 
-  ingress:
-    enabled: true
+  service:
     annotations:
-      kubernetes.io/ingress.class: nginx
-    hosts:
-      - prometheus.atv.riskfocus.com
+      fabric8.io/expose: "true"
+      fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+
   resources:
      limits:
        cpu: 500m

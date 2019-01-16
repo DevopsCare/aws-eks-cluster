@@ -1,6 +1,11 @@
 adminUser: admin
 adminPassword: sweetTapDancing
 
+service:
+  annotations:
+    fabric8.io/expose: "true"
+    fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+
 plugins:
   - digrich-bubblechart-panel
   - grafana-clock-panel
@@ -76,16 +81,7 @@ dashboards:
       url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.yaml
       datasource: Prometheus
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
-  hosts:
-    - grafana.atv.riskfocus.com
-
 persistence:
-
   enabled: true
   accessModes:
     - ReadWriteOnce

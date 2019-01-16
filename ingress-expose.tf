@@ -24,10 +24,10 @@ resource "helm_release" "ingress" {
   }
 }
 
+// TODO this creates a job. we would want a daemon!
 resource "helm_release" "expose" {
   name      = "expose"
   chart     = "jx/exposecontroller"
-  namespace = "kube-system"
   values    = ["${file("${path.module}/values/expose.yaml")}"]
 
   set = {
@@ -38,27 +38,6 @@ resource "helm_release" "expose" {
   set = {
     name  = "config.domain"
     value = "${var.project_fqdn}"
-  }
-
-  lifecycle {
-    ignore_changes = ["keyring"]
-  }
-}
-
-resource "helm_release" "expose-cleanup" {
-  name      = "expose-cleanup"
-  chart     = "jx/exposecontroller"
-  namespace = "kube-system"
-  values    = ["${file("${path.module}/values/expose-cleanup.yaml")}"]
-
-  set = {
-    name  = "helm_repository.jx"
-    value = "${module.eks.cluster_id}"
-  }
-
-  set = {
-    name  = "helm_repository.jx"
-    value = "${module.eks.cluster_id}"
   }
 
   lifecycle {

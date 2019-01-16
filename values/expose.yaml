@@ -8,6 +8,4 @@ config:
 Args:
   - --v
   - 4
-Annotations:
-  helm.sh/hook: post-install,post-upgrade
-  helm.sh/hook-delete-policy: hook-succeeded
+  - --daemon
