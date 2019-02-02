@@ -10,6 +10,7 @@ module "vpc" {
     "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 1)}",
   ]
 
+  # TODO: use data to get AZS
   azs = [
     "${var.aws_region}a",
     "${var.aws_region}b",

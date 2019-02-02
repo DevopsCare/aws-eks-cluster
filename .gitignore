@@ -1,2 +1,5 @@
 config-map*.yaml
 kubeconfig*
+
+.vscode
+.terraform

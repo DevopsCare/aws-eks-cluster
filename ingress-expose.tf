@@ -26,9 +26,9 @@ resource "helm_release" "ingress" {
 
 // TODO this creates a job. we would want a daemon!
 resource "helm_release" "expose" {
-  name      = "expose"
-  chart     = "jx/exposecontroller"
-  values    = ["${file("${path.module}/values/expose.yaml")}"]
+  name   = "expose"
+  chart  = "jx/exposecontroller"
+  values = ["${file("${path.module}/values/expose.yaml")}"]
 
   set = {
     name  = "dummy.depends_on"

@@ -1,3 +1,21 @@
+provider "kubernetes" {
+  config_path = "${path.root}/kubeconfig_${local.cluster_name}"
+}
+
+provider "helm" {
+  service_account = "eks-admin"
+  tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.11.0"
+
+  kubernetes = {
+    config_path = "${path.root}/kubeconfig_${local.cluster_name}"
+  }
+}
+
+provider "aws" {
+  version = ">= 1.47.0"
+  region  = "${var.aws_region}"
+}
+
 data "aws_caller_identity" "current" {}
 
 locals {

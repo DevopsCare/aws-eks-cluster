@@ -1,19 +1,3 @@
-provider "kubernetes" {
-  config_path = "${path.root}/kubeconfig_${local.cluster_name}"
-
-  //  config_path = "${path.root}/kubeconfig_default-cluster"
-}
-
-provider "helm" {
-  service_account = "eks-admin"
-
-  kubernetes = {
-    config_path = "${path.root}/kubeconfig_${local.cluster_name}"
-
-    //    config_path = "${path.root}/kubeconfig_default-cluster"
-  }
-}
-
 resource "helm_repository" "coreos" {
   name = "coreos"
   url  = "https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/"
@@ -47,30 +31,11 @@ resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
   }
 }
 
-resource "helm_release" "auto-scaler" {
-  name      = "auto-scaler"
-  chart     = "stable/cluster-autoscaler"
-  namespace = "kube-system"
-  values    = ["${file("${path.module}/values/autoscaler.yaml")}"]
-
-  set = {
-    name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
-  }
-
-  set = {
-    name  = "awsRegion"
-    value = "${var.aws_region}"
-  }
-
-  set = {
-    name  = "autoDiscovery.clusterName"
-    value = "${local.cluster_name}"
-  }
-
-  lifecycle {
-    ignore_changes = ["keyring"]
-  }
+module "autoscaler" {
+  source       = "modules/autoscaler"
+  aws_region   = "${var.aws_region}"
+  cluster_name = "${local.cluster_name}"
+  kubeconfig   = "${path.root}/kubeconfig_${local.cluster_name}"
 }
 
 resource "helm_release" "kubernetes-dashboard" {
@@ -90,30 +55,11 @@ resource "helm_release" "kubernetes-dashboard" {
   }
 }
 
-resource "helm_release" "external-dns" {
-  name      = "external-dns-public"
-  chart     = "stable/external-dns"
-  namespace = "default"
-  values    = ["${file("${path.module}/values/external-dns.yaml")}"]
-
-  set = {
-    name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
-  }
-
-  set = {
-    name  = "aws.region"
-    value = "${var.aws_region}"
-  }
-
-  set = {
-    name  = "txtOwnerId"
-    value = "${var.project_prefix}-dns-public"
-  }
-
-  lifecycle {
-    ignore_changes = ["keyring"]
-  }
+module "external-dns" {
+  source                    = "modules/external-dns"
+  aws_region                = "${var.aws_region}"
+  external_dns_txt_owner_id = "${var.project_prefix}-dns-public"
+  kubeconfig                = "${path.root}/kubeconfig_${local.cluster_name}"
 }
 
 resource "helm_release" "grafana" {
@@ -145,23 +91,5 @@ resource "helm_release" "prometheus" {
 
   lifecycle {
     ignore_changes = ["keyring"]
-  }
-}
-
-// TODO
-// kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-resource "kubernetes_storage_class" "gp2" {
-  metadata {
-    name = "gp2"
-
-    annotations = {
-      // TODO "storageclass.kubernetes.io/is-default-class" = "true"
-    }
-  }
-
-  storage_provisioner = "kubernetes.io/aws-ebs"
-
-  parameters {
-    type = "gp2"
   }
 }

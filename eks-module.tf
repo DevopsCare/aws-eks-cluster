@@ -120,6 +120,46 @@ resource "aws_iam_role_policy_attachment" "workers_extra_policy" {
   role       = "${module.eks.worker_iam_role_name}"
 }
 
+# TODO: use these policies instead of full Route53 access
+#
+# data "aws_iam_policy_document" "cert-manager-route53" {
+#   statement {
+#     actions = [
+#       "route53:GetChange"
+#     ]
+
+#     resources = [
+#       "arn:aws:route53:::change/${aws_route53_zone.primary.zone_id}",
+#     ]
+#   }
+
+#   statement {
+#     actions = [
+#       "route53:ChangeResourceRecordSets"
+#     ]
+
+#     resources = [
+#       "arn:aws:route53:::hostedzone/${aws_route53_zone.primary.zone_id}",
+#     ]
+#   }
+
+#   statement {
+#     actions = [
+#       "route53:ListHostedZonesByName",
+#     ]
+
+#     resources = [
+#       "*",
+#     ]
+#   }
+# }
+
+# resource "aws_iam_role_policy" "cert-manager-route53" {
+#   name   = "cert-manager-route53"
+#   role   = "${module.eks.worker_iam_role_name}"
+#   policy = "${data.aws_iam_policy_document.cert-manager-route53.json}"
+# }
+
 data "aws_iam_policy_document" "eks-assume-role" {
   statement {
     actions = [

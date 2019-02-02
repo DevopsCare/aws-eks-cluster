@@ -1,8 +1,8 @@
 config:
   domain: SET_ME
   exposer: Ingress
-  http: "true"
-  tlsacme: "false"
+  http: true
+  tlsacme: true
   pathMode: ""
 
 Args:

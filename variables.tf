@@ -1,8 +1,18 @@
-variable "aws_region" {}
-variable "aws_profile" {}
-variable "project_prefix" {}
-variable "project_fqdn" {}
-variable "project_rev_fqdn" {}
+variable "aws_region" {
+  type = "string"
+}
+
+variable "aws_profile" {
+  type = "string"
+}
+
+variable "config_output_path" {
+  type = "string"
+}
+
+variable "email" {
+  type = "string"
+}
 
 variable vpc_cidr {
   type    = "string"
@@ -14,11 +24,17 @@ variable "ip_whitelist" {
   default = []
 }
 
-variable "config_output_path" {}
+variable key_name {
+  type = "string"
+}
 
 variable "kubectl_assume_role" {
   default = ""
 }
+
+variable "project_prefix" {}
+variable "project_fqdn" {}
+variable "project_rev_fqdn" {}
 
 variable "spot_price" {
   default = "0.1"
