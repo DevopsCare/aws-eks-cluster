@@ -2,9 +2,10 @@
 module "vpc" {
   source         = "terraform-aws-modules/vpc/aws"
   version        = ">=1.46.0"
-  cidr           = "172.31.224.0/20"
+  cidr           = "${var.vpc_cidr}"
   tags           = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
-  public_subnets = ["172.31.230.0/24", "172.31.231.0/24"]
+  public_subnets = [
+    "${cidrsubnet(var.vpc_cidr, 8, 10)}", "${cidrsubnet(var.vpc_cidr, 8, 11)}"]
 
   azs = [
     "${var.aws_region}a",
@@ -19,15 +20,15 @@ module "vpc" {
 */
 
   private_subnets = [
-    "172.31.224.0/24",
-    "172.31.225.0/24",
-    "172.31.226.0/24",
+    "${cidrsubnet(var.vpc_cidr, 8, 0)}",
+    "${cidrsubnet(var.vpc_cidr, 8, 1)}",
+    "${cidrsubnet(var.vpc_cidr, 8, 2)}",
   ]
 
   /*
-    "172.31.227.0/24",
-    "172.31.228.0/24",
-    "172.31.229.0/24",
+    "${cidrsubnet(var.vpc_cidr, 8, 3)}",
+    "${cidrsubnet(var.vpc_cidr, 8, 4)}",
+    "${cidrsubnet(var.vpc_cidr, 8, 5)}",
 */
 
   enable_dns_hostnames = true

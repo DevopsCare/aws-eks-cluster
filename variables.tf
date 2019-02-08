@@ -4,6 +4,11 @@ variable "project_prefix" {}
 variable "project_fqdn" {}
 variable "project_rev_fqdn" {}
 
+variable vpc_cidr {
+  type = "string"
+  default = "172.31.0.0/16"
+}
+
 variable "ip_whitelist" {
   type    = "list"
   default = []
