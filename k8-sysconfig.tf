@@ -1,5 +1,7 @@
 provider "kubernetes" {
   config_path = "${path.root}/kubeconfig_${local.cluster_name}"
+
+  //  config_path = "${path.root}/kubeconfig_default-cluster"
 }
 
 provider "helm" {
@@ -7,6 +9,8 @@ provider "helm" {
 
   kubernetes = {
     config_path = "${path.root}/kubeconfig_${local.cluster_name}"
+
+    //    config_path = "${path.root}/kubeconfig_default-cluster"
   }
 }
 
