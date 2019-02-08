@@ -66,34 +66,3 @@ resource "aws_security_group" "whitelist" {
     cidr_blocks = "${local.github_meta_hooks}"
   }
 }
-
-resource "aws_vpc_peering_connection" "peer" {
-  vpc_id        = "${module.vpc.vpc_id}"
-  peer_vpc_id   = "${var.shared_vpc_id}"
-  peer_owner_id = "${data.aws_caller_identity.master.account_id}"
-  auto_accept   = false
-
-  requester {
-    allow_remote_vpc_dns_resolution = true
-  }
-
-  tags = {
-    Name = "Shared VPC"
-    Side = "Requester"
-  }
-}
-
-resource "aws_vpc_peering_connection_accepter" "peer" {
-  provider                  = "aws.master"
-  vpc_peering_connection_id = "${aws_vpc_peering_connection.peer.id}"
-  auto_accept               = true
-
-  accepter {
-    allow_remote_vpc_dns_resolution = true
-  }
-
-  tags = {
-    Name = "${var.project_fqdn}"
-    Side = "Accepter"
-  }
-}
