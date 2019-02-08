@@ -95,6 +95,7 @@ module "eks" {
     spot_price           = "${var.spot_price}"
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
+    enabled_metrics      = "GroupInServiceInstances,GroupDesiredCapacity"
 
     // SWAP. Ppl say it's bad idea?
     //    pre_userdata         = "bash <(curl https://gist.githubusercontent.com/rfvermut/4f141cbdfd107d95018731439ffe737d/raw/001cfdbf532d84c7307be4133883202dbcf96e58/add_swap.sh) 2"
