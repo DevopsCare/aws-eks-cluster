@@ -16,8 +16,6 @@ resource "helm_repository" "coreos" {
 }
 
 resource "kubernetes_service_account" "eks-admin" {
-  depends_on = ["module.eks"]
-
   metadata = {
     name      = "eks-admin"
     namespace = "kube-system"
@@ -74,7 +72,7 @@ resource "helm_release" "auto-scaler" {
 resource "helm_release" "kubernetes-dashboard" {
   name      = "kubernetes-dashboard"
   chart     = "stable/kubernetes-dashboard"
-  version   = "0.10.2"    // Until https://github.com/helm/charts/issues/10714
+  version   = "0.10.2"                                            // Until https://github.com/helm/charts/issues/10714
   namespace = "kube-system"
   values    = ["${file("${path.module}/values/dashboard.yaml")}"]
 
@@ -149,8 +147,6 @@ resource "helm_release" "prometheus" {
 // TODO
 // kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 resource "kubernetes_storage_class" "gp2" {
-  depends_on = ["module.eks"]
-
   metadata {
     name = "gp2"
 
