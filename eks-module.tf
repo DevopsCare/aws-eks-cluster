@@ -7,7 +7,7 @@ locals {
 //noinspection MissingModule
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
-  version      = ">= 2.0"
+  version      = ">= 2.1"
   cluster_name = "${local.cluster_name}"
 
   subnets = [
@@ -24,10 +24,17 @@ module "eks" {
 
   kubeconfig_aws_authenticator_additional_args = "${local.kubectl_assume_role_args}"
 
+  map_roles_count = 3
+
   map_roles = [
     {
+      role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AdministratorAccess_fdd93031f4fbd3aa"
+      username = "eks-admin:{{SessionName}}"
+      group    = "system:masters"
+    },
+    {
       // TODO needs magic? Needs special named role?
-      role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_SystemAdministrator_b3ce867e2b11b535"
+      role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_SystemAdministrator_fdd93031f4fbd3aa"
       username = "eks-admin:{{SessionName}}"
       group    = "system:masters"
     },
@@ -127,39 +134,9 @@ resource "aws_iam_role_policy_attachment" "workers_AmazonRoute53FullAccess" {
   role       = "${module.eks.worker_iam_role_name}"
 }
 
-data "aws_iam_policy_document" "common-s3" {
-  statement {
-    actions = [
-      "s3:ListBucket",
-      "s3:GetLifecycleConfiguration",
-      "s3:PutLifecycleConfiguration",
-    ]
-
-    resources = [
-      "arn:aws:s3:::${var.project_rev_fqdn}.common",
-    ]
-  }
-
-  statement {
-    actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "s3:DeleteObject",
-      "s3:PutObjectTagging",
-      "s3:GetObjectTagging",
-      "s3:DeleteObjectTagging",
-    ]
-
-    resources = [
-      "arn:aws:s3:::${var.project_rev_fqdn}.common/*",
-    ]
-  }
-}
-
-resource "aws_iam_role_policy" "common-s3" {
-  name   = "common-s3"
-  role   = "${module.eks.worker_iam_role_name}"
-  policy = "${data.aws_iam_policy_document.common-s3.json}"
+resource "aws_iam_role_policy_attachment" "workers_extra_policy" {
+  policy_arn = "${var.extra_policy_arn}"
+  role       = "${module.eks.worker_iam_role_name}"
 }
 
 data "aws_iam_policy_document" "eks-assume-role" {

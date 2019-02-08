@@ -5,7 +5,7 @@ variable "project_fqdn" {}
 variable "project_rev_fqdn" {}
 
 variable vpc_cidr {
-  type = "string"
+  type    = "string"
   default = "172.31.0.0/16"
 }
 
@@ -26,4 +26,9 @@ variable "spot_price" {
 
 variable key_name {
   type = "string"
+}
+
+variable extra_policy_arn {
+  type    = "string"
+  default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
