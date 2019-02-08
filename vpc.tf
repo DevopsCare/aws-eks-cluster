@@ -1,11 +1,14 @@
 //noinspection MissingModule
 module "vpc" {
-  source         = "terraform-aws-modules/vpc/aws"
-  version        = ">=1.46.0"
-  cidr           = "${var.vpc_cidr}"
-  tags           = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = ">=1.46.0"
+  cidr    = "${var.vpc_cidr}"
+  tags    = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
+
   public_subnets = [
-    "${cidrsubnet(var.vpc_cidr, 8, 10)}", "${cidrsubnet(var.vpc_cidr, 8, 11)}"]
+    "${cidrsubnet(var.vpc_cidr, 8, 10)}",
+    "${cidrsubnet(var.vpc_cidr, 8, 11)}",
+  ]
 
   azs = [
     "${var.aws_region}a",
@@ -61,5 +64,36 @@ resource "aws_security_group" "whitelist" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = "${local.github_meta_hooks}"
+  }
+}
+
+resource "aws_vpc_peering_connection" "peer" {
+  vpc_id        = "${module.vpc.vpc_id}"
+  peer_vpc_id   = "${var.shared_vpc_id}"
+  peer_owner_id = "${data.aws_caller_identity.master.account_id}"
+  auto_accept   = false
+
+  requester {
+    allow_remote_vpc_dns_resolution = true
+  }
+
+  tags = {
+    Name = "Shared VPC"
+    Side = "Requester"
+  }
+}
+
+resource "aws_vpc_peering_connection_accepter" "peer" {
+  provider                  = "aws.master"
+  vpc_peering_connection_id = "${aws_vpc_peering_connection.peer.id}"
+  auto_accept               = true
+
+  accepter {
+    allow_remote_vpc_dns_resolution = true
+  }
+
+  tags = {
+    Name = "${var.project_fqdn}"
+    Side = "Accepter"
   }
 }

@@ -1,5 +1,17 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_caller_identity" "master" {
+  provider = "aws.master"
+}
+
+//noinspection MissingProperty
+provider "aws" {}
+
+//noinspection MissingProperty
+provider "aws" {
+  alias = "master"
+}
+
 locals {
   vpc_tags = {
     Name        = "${var.project_prefix}-vpc"

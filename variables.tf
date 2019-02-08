@@ -32,3 +32,7 @@ variable extra_policy_arn {
   type    = "string"
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
+
+variable "shared_vpc_id" {
+  type = "string"
+}
