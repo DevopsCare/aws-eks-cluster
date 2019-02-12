@@ -33,6 +33,6 @@ variable extra_policy_arn {
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
-variable "shared_vpc_id" {
+variable "shared_tgw_id" {
   type = "string"
 }
