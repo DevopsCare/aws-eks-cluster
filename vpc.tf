@@ -6,33 +6,19 @@ module "vpc" {
   tags    = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
 
   public_subnets = [
-    "${cidrsubnet(var.vpc_cidr, 8, 10)}",
-    "${cidrsubnet(var.vpc_cidr, 8, 11)}",
+    "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 0)}",
+    "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 1)}",
   ]
 
   azs = [
     "${var.aws_region}a",
     "${var.aws_region}b",
-    "${var.aws_region}c",
   ]
-
-  /*
-    "${data.aws_region.current.name}d",
-    "${data.aws_region.current.name}e",
-    "${data.aws_region.current.name}f",
-*/
 
   private_subnets = [
-    "${cidrsubnet(var.vpc_cidr, 8, 0)}",
-    "${cidrsubnet(var.vpc_cidr, 8, 1)}",
-    "${cidrsubnet(var.vpc_cidr, 8, 2)}",
+    "${cidrsubnet(var.vpc_cidr, 2, 0)}",
+    "${cidrsubnet(var.vpc_cidr, 2, 1)}",
   ]
-
-  /*
-    "${cidrsubnet(var.vpc_cidr, 8, 3)}",
-    "${cidrsubnet(var.vpc_cidr, 8, 4)}",
-    "${cidrsubnet(var.vpc_cidr, 8, 5)}",
-*/
 
   enable_dns_hostnames = true
   enable_dns_support   = true

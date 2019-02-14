@@ -1,5 +1,5 @@
 locals {
-  worker_asg_count         = 6
+  worker_asg_count         = 4
   cluster_name             = "${terraform.workspace}-cluster"
   kubectl_assume_role_args = "${split(",", var.kubectl_assume_role != "" ? join(",",list("\"-r\"", "\"${var.kubectl_assume_role}\"")) : "")}"
 }
@@ -11,7 +11,8 @@ module "eks" {
   cluster_name = "${local.cluster_name}"
 
   subnets = [
-    "${module.vpc.private_subnets}",
+    "${module.vpc.private_subnets[0]}",
+    "${module.vpc.private_subnets[1]}",
   ]
 
   tags   = "${local.eks_tags}"
@@ -60,9 +61,6 @@ module "eks" {
       subnets = "${module.vpc.private_subnets[1]}"
     },
     {
-      subnets = "${module.vpc.private_subnets[2]}"
-    },
-    {
       // Bigger instances
       instance_type = "t3.xlarge"
       subnets       = "${module.vpc.private_subnets[0]}"
@@ -71,35 +69,17 @@ module "eks" {
       instance_type = "t3.xlarge"
       subnets       = "${module.vpc.private_subnets[1]}"
     },
-    {
-      instance_type = "t3.xlarge"
-      subnets       = "${module.vpc.private_subnets[2]}"
-    },
   ]
-
-  /*    {
-      subnets = "${module.vpc.private_subnets[3]}"
-    },
-    {
-      subnets = "${module.vpc.private_subnets[4]}"
-    },
-    {
-      subnets = "${module.vpc.private_subnets[5]}"
-    },*/
 
   workers_group_defaults = {
     asg_desired_capacity = 1
-    asg_max_size         = 15
+    asg_max_size         = 25
     asg_min_size         = 0
     instance_type        = "t3.medium"
     spot_price           = "${var.spot_price}"
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
     enabled_metrics      = "GroupInServiceInstances,GroupDesiredCapacity"
-
-    // SWAP. Ppl say it's bad idea?
-    //    pre_userdata         = "bash <(curl https://gist.githubusercontent.com/rfvermut/4f141cbdfd107d95018731439ffe737d/raw/001cfdbf532d84c7307be4133883202dbcf96e58/add_swap.sh) 2"
-    //    kubelet_extra_args   = "--fail-swap-on=false --eviction-hard=memory.available<500Mi --system-reserved=memory=1Gi"
   }
 }
 
