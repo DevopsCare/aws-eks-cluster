@@ -6,7 +6,7 @@ resource "helm_release" "autoscaler" {
   version   = "${var.autoscaler_chart_version}"
   timeout   = "${var.timeout}"
 
-  values = ["${file("${path.root}/values/autoscaler.yaml")}",
+  values = ["${file("${path.module}/files/values.yaml")}",
     "${var.autoscaler_additional_settings}",
   ]
 

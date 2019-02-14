@@ -5,7 +5,7 @@ resource "helm_release" "external-dns" {
   namespace = "${var.external_dns_namespace}"
   version   = "${var.external_dns_chart_version}"
 
-  values = ["${file("${path.root}/values/external-dns.yaml")}",
+  values = ["${file("${path.module}/files/values.yaml")}",
     "${var.external_dns_additional_settings}",
   ]
 

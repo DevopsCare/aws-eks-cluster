@@ -40,10 +40,6 @@ variable "spot_price" {
   default = "0.1"
 }
 
-variable key_name {
-  type = "string"
-}
-
 variable extra_policy_arn {
   type    = "string"
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
