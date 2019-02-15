@@ -35,7 +35,7 @@ module "autoscaler" {
   source       = "modules/autoscaler"
   aws_region   = "${var.aws_region}"
   cluster_name = "${local.cluster_name}"
-  kubeconfig   = "${path.root}/kubeconfig_${local.cluster_name}"
+  kubeconfig   = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
 resource "helm_release" "kubernetes-dashboard" {
@@ -59,7 +59,7 @@ module "external-dns" {
   source                    = "modules/external-dns"
   aws_region                = "${var.aws_region}"
   external_dns_txt_owner_id = "${var.project_prefix}-dns-public"
-  kubeconfig                = "${path.root}/kubeconfig_${local.cluster_name}"
+  kubeconfig                = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
 resource "helm_release" "grafana" {
