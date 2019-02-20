@@ -15,5 +15,5 @@ variable "kubeconfig" {
 }
 
 variable "nginx_chart_version" {
-  default = "0.31.0"
+  default = "1.1.5"
 }

@@ -6,6 +6,7 @@ resource "helm_repository" "jx" {
 resource "helm_release" "ingress" {
   name      = "nginx-ingress"
   chart     = "stable/nginx-ingress"
+  version   = "1.1.5"
   namespace = "kube-system"
   values    = ["${file("${path.module}/values/nginx.yaml")}"]
 
