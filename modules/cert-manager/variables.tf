@@ -24,5 +24,5 @@ variable "kubeconfig" {
 }
 
 variable "staging" {
-  default = false
+  default = true
 }
