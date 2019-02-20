@@ -8,7 +8,7 @@ resource "null_resource" "crd" {
 
 resource "local_file" "issuers" {
   content  = "${data.template_file.issuers.rendered}"
-  filename = "${path.root}/issuers.yaml"
+  filename = "${path.module}/issuers.yaml"
 }
 
 resource "null_resource" "issuers" {
@@ -18,7 +18,7 @@ resource "null_resource" "issuers" {
 
   provisioner "local-exec" {
     command = <<EOT
-      kubectl apply --kubeconfig ${var.kubeconfig} -f ${path.root}/issuers.yaml
+      kubectl apply --kubeconfig ${var.kubeconfig} -f ${path.module}/issuers.yaml
     EOT
   }
 
