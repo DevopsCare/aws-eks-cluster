@@ -17,7 +17,7 @@ resource "helm_release" "ingress" {
 
   set = {
     name  = "controller.service.loadBalancerSourceRanges"
-    value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks))}}"
+    value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound))}}"
   }
 
   lifecycle {

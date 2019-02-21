@@ -40,4 +40,11 @@ locals {
     "185.199.108.0/22",
     "140.82.112.0/20",
   ]
+
+  // https://confluence.atlassian.com/bitbucket/what-are-the-bitbucket-cloud-ip-addresses-i-should-use-to-configure-my-corporate-firewall-343343385.html
+  atlassian_inbound = [
+    "18.205.93.0/25",
+    "18.234.32.128/25",
+    "13.52.5.0/25",
+  ]
 }

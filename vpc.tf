@@ -43,13 +43,13 @@ resource "aws_security_group" "whitelist" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = "${local.github_meta_hooks}"
+    cidr_blocks = ["${local.github_meta_hooks}", "${local.atlassian_inbound}"]
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = "${local.github_meta_hooks}"
+    cidr_blocks = ["${local.github_meta_hooks}", "${local.atlassian_inbound}"]
   }
 }
