@@ -11,7 +11,8 @@ variable "config_output_path" {
 }
 
 variable "email" {
-  type = "string"
+  description = "Email for registration in Letsencrypt"
+  default     = "acme@example.com"
 }
 
 variable vpc_cidr {

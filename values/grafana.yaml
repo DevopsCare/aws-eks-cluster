@@ -4,7 +4,7 @@ adminPassword: sweetTapDancing
 service:
   annotations:
     fabric8.io/expose: "true"
-    fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
+    fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx\ncertmanager.k8s.io/cluster-issuer: letsencrypt-prod"
 
 plugins:
   - digrich-bubblechart-panel
