@@ -1,6 +1,9 @@
 extraArgs:
   skip-nodes-with-system-pods: "false"
   skip-nodes-with-local-storage: "false"
+  max-node-provision-time: "3m0s"
+  expander: "least-waste"
+  expendable-pods-priority-cutoff: "-10"
 
 rbac:
   create: true

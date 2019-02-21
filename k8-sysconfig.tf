@@ -38,6 +38,22 @@ module "autoscaler" {
   kubeconfig   = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
+resource "helm_release" "overprovisioner" {
+  name      = "overprovisioner"
+  chart     = "stable/cluster-overprovisioner"
+  namespace = "kube-system"
+  values    = ["${file("${path.module}/values/overprovisioner.yaml")}"]
+
+  set = {
+    name  = "dummy.depends_on"
+    value = "${module.eks.cluster_id}"
+  }
+
+  lifecycle {
+    ignore_changes = ["keyring"]
+  }
+}
+
 resource "helm_release" "kubernetes-dashboard" {
   name      = "kubernetes-dashboard"
   chart     = "stable/kubernetes-dashboard"
