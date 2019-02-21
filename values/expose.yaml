@@ -1,9 +1,7 @@
 config:
   domain: SET_ME
   exposer: Ingress
-  http: false
   tlsacme: true
-  pathMode: ""
 
 Args:
   - --v
