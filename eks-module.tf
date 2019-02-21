@@ -80,6 +80,11 @@ module "eks" {
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
     enabled_metrics      = "GroupInServiceInstances,GroupDesiredCapacity"
+
+    pre_userdata = <<-EOF
+      echo "$(jq '."default-ulimits".nofile.Hard=65536 | ."default-ulimits".nofile.Soft=65536' /etc/docker/daemon.json)" > /etc/docker/daemon.json
+      systemctl restart docker
+      EOF
   }
 }
 
