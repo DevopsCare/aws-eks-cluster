@@ -50,6 +50,10 @@ resource "aws_instance" "bastion" {
   key_name  = "${var.key_name}"
   user_data = "${file("${path.module}/files/bastion_ssh_keys.sh")}"
   tags      = "${local.bastion_tags}"
+
+  lifecycle {
+    ignore_changes = ["ami"]
+  }
 }
 
 resource "aws_security_group" "allow_ssh_from_bastion" {
