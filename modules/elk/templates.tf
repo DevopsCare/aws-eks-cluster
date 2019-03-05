@@ -11,7 +11,7 @@ data "template_file" "kibana-values" {
     template = "${file("${path.module}/templates/kibana-values.yaml.tpl")}"
 
     vars {
-        kibana_version    = "${var.kibana_version}"
-        elasticsearch_url = "https://${aws_elasticsearch_domain.es.endpoint}:${var.elasticsearch_port}" 
+        elasticsearch_endpoint = "https://${aws_elasticsearch_domain.es.endpoint}:${var.elasticsearch_port}" 
+        kibana_version         = "${var.kibana_version}"
     }
 }
