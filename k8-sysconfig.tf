@@ -38,6 +38,11 @@ module "autoscaler" {
   kubeconfig   = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
+module "filebeat" {
+  source                 = "modules/filebeat"
+  elasticsearch_endpoint = "${module.elk.elasticsearch_endpoint}"
+}
+
 resource "helm_release" "overprovisioner" {
   name      = "overprovisioner"
   chart     = "stable/cluster-overprovisioner"
