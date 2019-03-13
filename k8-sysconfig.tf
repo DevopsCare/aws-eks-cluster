@@ -59,6 +59,27 @@ resource "helm_release" "overprovisioner" {
   }
 }
 
+resource "helm_release" "metrics-server" {
+  name      = "metrics-server"
+  chart     = "stable/metrics-server"
+  namespace = "kube-system"
+
+  values = [
+    "${file("${path.module}/values/metrics-server.yaml")}",
+  ]
+
+  set = {
+    name  = "dummy.depends_on"
+    value = "${module.eks.cluster_id}"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      "keyring",
+    ]
+  }
+}
+
 resource "helm_release" "kubernetes-dashboard" {
   name      = "kubernetes-dashboard"
   chart     = "stable/kubernetes-dashboard"
