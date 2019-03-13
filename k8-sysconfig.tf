@@ -62,7 +62,6 @@ resource "helm_release" "overprovisioner" {
 resource "helm_release" "kubernetes-dashboard" {
   name      = "kubernetes-dashboard"
   chart     = "stable/kubernetes-dashboard"
-  version   = "0.10.2"                                            // Until https://github.com/helm/charts/issues/10714
   namespace = "kube-system"
   values    = ["${file("${path.module}/values/dashboard.yaml")}"]
 
