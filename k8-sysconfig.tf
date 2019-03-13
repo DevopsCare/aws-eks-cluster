@@ -134,3 +134,7 @@ resource "helm_release" "prometheus" {
     ignore_changes = ["keyring"]
   }
 }
+
+// TODO
+// kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+

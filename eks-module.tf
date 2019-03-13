@@ -165,11 +165,9 @@ resource "aws_iam_role_policy_attachment" "workers_extra_policy" {
 #   policy = "${data.aws_iam_policy_document.cert-manager-route53.json}"
 # }
 
-data "aws_iam_policy_document" "eks-assume-role" {
+data "aws_iam_policy_document" "eks-default-role" {
   statement {
-    actions = [
-      "sts:AssumeRole",
-    ]
+    actions = ["sts:AssumeRole"]
 
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/EKS-Role-*",
@@ -177,8 +175,8 @@ data "aws_iam_policy_document" "eks-assume-role" {
   }
 }
 
-resource "aws_iam_role_policy" "eks-assume-role" {
-  name   = "eks-assume-role"
+resource "aws_iam_role_policy" "eks-default-role" {
+  name   = "eks-default-role"
   role   = "${module.eks.worker_iam_role_name}"
-  policy = "${data.aws_iam_policy_document.eks-assume-role.json}"
+  policy = "${data.aws_iam_policy_document.eks-default-role.json}"
 }
