@@ -21,7 +21,6 @@ resource "aws_iam_service_linked_role" "es" {
 
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = "${var.domain}"
-  access_policies       = "${data.aws_iam_policy_document.elk_policy.json}"
   elasticsearch_version = "${var.elasticsearch_version}"
 
   cluster_config {
