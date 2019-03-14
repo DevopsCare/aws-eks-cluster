@@ -48,4 +48,5 @@ variable extra_policy_arn {
 
 variable "shared_tgw_id" {
   type = "string"
+  default = ""
 }

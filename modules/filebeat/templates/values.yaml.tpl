@@ -25,7 +25,7 @@ config:
   http.port: 5066
   output.elasticsearch:
     hosts: ["https://${elasticsearch_endpoint}:${elasticsearch_port}"]
-    index: "weissr-%%{+yyyy.MM.dd}"
+    index: "filebeat-%%{+yyyy.MM.dd}"
   output.file:
     enabled: false
   processors:
