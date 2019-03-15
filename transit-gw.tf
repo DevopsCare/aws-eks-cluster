@@ -1,9 +1,8 @@
-// TODO waiting for https://github.com/terraform-providers/terraform-provider-aws/issues/6670
-/*resource "aws_ec2_transit_gateway_vpc_attachment" "eks-vpc" {
+resource "aws_ec2_transit_gateway_vpc_attachment" "eks-vpc" {
   subnet_ids         = ["${module.vpc.private_subnets}"]
   transit_gateway_id = "${var.shared_tgw_id}"
   vpc_id             = "${module.vpc.vpc_id}"
-}*/
+}
 
 resource "aws_route" "private-route" {
   count                  = "${length(module.vpc.private_route_table_ids)}"
