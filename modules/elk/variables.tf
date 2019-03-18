@@ -15,7 +15,7 @@ variable "elasticsearch_port" {
 }
 
 variable "elasticsearch_version" {
-  default = "6.3"
+  default = "6.4"
 }
 
 variable "curator_enabled" {
@@ -49,7 +49,7 @@ variable "ip_whitelist" {
 }
 
 variable "kibana_chart_version" {
-  default = "1.5.2"
+  default = "1.6.0"
 }
 
 variable "kibana_release_name" {
@@ -61,18 +61,17 @@ variable "kibana_namespace" {
 }
 
 variable "kibana_version" {
-  default = "6.3.1"
+  default = "6.4.3"
 }
 
 variable "selfhosted_kibana_enabled" {
   description = "Enable deploy Kibana to the Kubernetes cluster "
-  default = true
+  default     = true
 }
 
 variable "subnet_ids" {
   type = "list"
 }
-
 
 variable "vpc_id" {
   type = "string"
