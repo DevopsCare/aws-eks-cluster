@@ -3,7 +3,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version = ">=0.9"
+  version         = ">=0.9"
   service_account = "eks-admin"
   tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.11.0"
 
@@ -15,8 +15,9 @@ provider "helm" {
 data "aws_caller_identity" "current" {}
 
 locals {
+  vpc_name = "${var.project_prefix}-vpc"
+
   vpc_tags = {
-    Name        = "${var.project_prefix}-vpc"
     Environment = "${var.project_prefix}-infra"
   }
 
