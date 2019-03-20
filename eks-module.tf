@@ -62,11 +62,11 @@ module "eks" {
     },
     {
       // Bigger instances
-      instance_type = "t3.xlarge"
+      instance_type = "t3.2xlarge"
       subnets       = "${module.vpc.private_subnets[0]}"
     },
     {
-      instance_type = "t3.xlarge"
+      instance_type = "t3.2xlarge"
       subnets       = "${module.vpc.private_subnets[1]}"
     },
   ]
@@ -75,7 +75,7 @@ module "eks" {
     asg_desired_capacity = 1
     asg_max_size         = 25
     asg_min_size         = 0
-    instance_type        = "t3.medium"
+    instance_type        = "t3.large"
     spot_price           = "${var.spot_price}"
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
