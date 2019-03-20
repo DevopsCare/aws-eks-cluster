@@ -16,6 +16,11 @@ resource "helm_release" "ingress" {
   }
 
   set = {
+    name  = "controller.config.whitelist-source-range"
+    value = "${join("\\,", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound))}"
+  }
+
+  set = {
     name  = "controller.service.loadBalancerSourceRanges"
     value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound))}}"
   }
