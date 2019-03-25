@@ -25,12 +25,32 @@ variable "ip_whitelist" {
   default = []
 }
 
+variable "keycloak_password" {
+  default = ""
+}
+
+variable "keycloak_username" {
+  default = "keycloak"
+}
+
 variable key_name {
   type = "string"
 }
 
 variable "kubectl_assume_role" {
   default = ""
+}
+
+variable "ldap_bind_dn" {
+  type = "string"
+}
+
+variable "ldap_host" {
+  type = "string"
+}
+
+variable "ldap_password" {
+  type = "string"
 }
 
 variable "project_prefix" {}
@@ -49,4 +69,8 @@ variable extra_policy_arn {
 variable "shared_tgw_id" {
   type    = "string"
   default = ""
+}
+
+variable "users_dn" {
+  type = "string"
 }
