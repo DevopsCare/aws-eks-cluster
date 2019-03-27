@@ -98,27 +98,11 @@ module "external-dns" {
   kubeconfig                = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
-resource "helm_release" "grafana" {
-  name      = "grafana"
-  chart     = "stable/grafana"
-  namespace = "default"
-  values    = ["${file("${path.module}/values/grafana.yaml")}"]
-
-  set = {
-    name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
-  }
-
-  lifecycle {
-    ignore_changes = ["keyring"]
-  }
-}
-
-resource "helm_release" "prometheus" {
-  name      = "prometheus"
-  chart     = "stable/prometheus"
-  namespace = "default"
-  values    = ["${file("${path.module}/values/prometheus.yaml")}"]
+resource "helm_release" "prometheus-operator" {
+  name      = "prometheus-operator"
+  chart     = "stable/prometheus-operator"
+  namespace = "monitoring"
+  values    = ["${file("${path.module}/values/prometheus-operator.yaml")}"]
 
   set = {
     name  = "dummy.depends_on"
