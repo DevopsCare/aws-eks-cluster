@@ -7,7 +7,7 @@ locals {
 //noinspection MissingModule
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
-  version      = ">= 2.1"
+  version      = ">= 2.3.1"
   cluster_name = "${local.cluster_name}"
 
   subnets = [
@@ -15,8 +15,10 @@ module "eks" {
     "${module.vpc.private_subnets[1]}",
   ]
 
-  tags   = "${local.eks_tags}"
-  vpc_id = "${module.vpc.vpc_id}"
+  tags                            = "${local.eks_tags}"
+  vpc_id                          = "${module.vpc.vpc_id}"
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = true
 
   worker_additional_security_group_ids = [
     "${aws_security_group.whitelist.id}",
@@ -80,6 +82,7 @@ module "eks" {
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
     enabled_metrics      = "GroupInServiceInstances,GroupDesiredCapacity"
+    bootstrap_extra_args = "--enable-docker-bridge true"
 
     pre_userdata = <<-EOF
       echo "$(jq '."default-ulimits".nofile.Hard=65536 | ."default-ulimits".nofile.Soft=65536' /etc/docker/daemon.json)" > /etc/docker/daemon.json
