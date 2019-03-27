@@ -1,3 +1,7 @@
+output "keycloak-subdomain" {
+  value = "${var.keycloak_release_name}.${var.keycloak_namespace}"
+}
+
 output "keycloak-username" {
   value = "${var.keycloak_username}"
 }

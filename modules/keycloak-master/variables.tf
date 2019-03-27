@@ -17,3 +17,23 @@ variable "keycloak_username" {
 variable "keycloak_password" {
   default = ""
 }
+
+variable "root_domain" {
+  type = "string"
+}
+
+variable "ldap_bind_dn" {
+  type = "string"
+}
+
+variable "ldap_password" {
+  type = "string"
+}
+
+variable "ldap_host" {
+  type = "string"
+}
+
+variable "users_dn" {
+  type = "string"
+}
