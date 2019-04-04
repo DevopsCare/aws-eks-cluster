@@ -1,0 +1,24 @@
+rbac:
+  create: true
+
+controller:
+  replicaCount: 1
+
+  config:
+    use-proxy-protocol: "true"
+
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+
+  publishService:
+    enabled: true
+  stats:
+    enabled: true
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"

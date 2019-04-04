@@ -1,0 +1,12 @@
+service:
+  name: sentry
+  type: ClusterIP
+  externalPort: 9000
+  internalPort: 9000
+
+ingress:
+  enabled: false
+  hostname: sentry.local
+
+  annotations:
+    kubernetes.io/ingress.class: nginx

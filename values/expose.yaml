@@ -1,0 +1,9 @@
+config:
+  domain: SET_ME
+  exposer: Ingress
+  tlsacme: "true"
+
+Args:
+  - --v
+  - 4
+  - --daemon
