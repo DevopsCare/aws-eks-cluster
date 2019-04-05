@@ -41,6 +41,30 @@ variable "shared_tgw_id" {
   default = ""
 }
 
+variable "keycloak_password" {
+  default = ""
+}
+
+variable "keycloak_username" {
+  default = "keycloak"
+}
+
+variable "ldap_bind_dn" {
+  type = "string"
+}
+
+variable "ldap_host" {
+  type = "string"
+}
+
+variable "ldap_password" {
+  type = "string"
+}
+
+variable "users_dn" {
+  type = "string"
+}
+
 // This is workaround var and better left as is
 variable "eks_cluster_name" {
   type    = "string"
