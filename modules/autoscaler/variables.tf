@@ -31,10 +31,6 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "kubeconfig" {
-  type = "string"
-}
-
 variable "timeout" {
   type    = "string"
   default = 30

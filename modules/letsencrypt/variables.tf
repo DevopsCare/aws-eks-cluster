@@ -2,10 +2,6 @@ variable "aws_region" {
   type = "string"
 }
 
-variable "aws_profile" {
-  default = "default"
-}
-
 variable "common_name" {
   type = "string"
 }

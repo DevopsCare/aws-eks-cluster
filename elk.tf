@@ -1,7 +1,7 @@
 module "elk" {
   source     = "modules/elk"
-  aws_region = "${var.aws_region}"
-  domain     = "${local.cluster_name}"
+  aws_region = "${local.aws_region}"
+  domain     = "${var.project_prefix}"
   subnet_ids = ["${module.vpc.private_subnets[0]}"]
   vpc_id     = "${module.vpc.vpc_id}"
 

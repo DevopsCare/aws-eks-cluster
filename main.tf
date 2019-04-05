@@ -1,5 +1,5 @@
 provider "kubernetes" {
-  config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
+  config_path = "${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster"
 }
 
 provider "helm" {
@@ -8,7 +8,7 @@ provider "helm" {
   tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.11.0"
 
   kubernetes = {
-    config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
+    config_path = "${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster"
   }
 }
 
@@ -20,9 +20,11 @@ provider "keycloak" {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
 
 locals {
-  vpc_name = "${var.project_prefix}-vpc"
+  aws_region = "${data.aws_region.current.name}"
+  vpc_name   = "${var.project_prefix}-vpc"
 
   vpc_tags = {
     Environment = "${var.project_prefix}-infra"

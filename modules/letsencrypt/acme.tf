@@ -17,7 +17,6 @@ resource "acme_certificate" "certificate" {
     provider = "route53"
 
     config {
-      AWS_PROFILE        = "${var.aws_profile}"
       AWS_DEFAULT_REGION = "${var.aws_region}"
     }
   }

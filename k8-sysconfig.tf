@@ -1,4 +1,4 @@
-resource "helm_repository" "coreos" {
+data "helm_repository" "coreos" {
   name = "coreos"
   url  = "https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/"
 }
@@ -33,9 +33,8 @@ resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
 
 module "autoscaler" {
   source       = "modules/autoscaler"
-  aws_region   = "${var.aws_region}"
+  aws_region   = "${local.aws_region}"
   cluster_name = "${local.cluster_name}"
-  kubeconfig   = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
 resource "helm_release" "overprovisioner" {
@@ -69,9 +68,7 @@ resource "helm_release" "metrics-server" {
   }
 
   lifecycle {
-    ignore_changes = [
-      "keyring",
-    ]
+    ignore_changes = ["keyring"]
   }
 }
 
@@ -93,9 +90,8 @@ resource "helm_release" "kubernetes-dashboard" {
 
 module "external-dns" {
   source                    = "modules/external-dns"
-  aws_region                = "${var.aws_region}"
+  aws_region                = "${local.aws_region}"
   external_dns_txt_owner_id = "${var.project_prefix}-dns-public"
-  kubeconfig                = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
 resource "helm_release" "prometheus-operator" {

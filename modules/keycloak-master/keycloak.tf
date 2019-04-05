@@ -11,7 +11,7 @@ resource "helm_release" "keycloak" {
 }
 
 resource "keycloak_realm" "realm" {
-  realm                = "weissr"
+  realm                = "default"
   enabled              = true
   access_code_lifespan = "1h"
 }

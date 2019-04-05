@@ -1,7 +1,3 @@
-variable "kubeconfig" {
-  type = "string"
-}
-
 variable "sentry_additional_settings" {
   default = ""
 }

@@ -1,34 +1,33 @@
 locals {
   worker_asg_count         = 4
-  cluster_name             = "${terraform.workspace}-cluster"
   kubectl_assume_role_args = "${split(",", var.kubectl_assume_role != "" ? join(",",list("\"-r\"", "\"${var.kubectl_assume_role}\"")) : "")}"
+  cluster_name             = "${var.eks_cluster_name == "" ? "${var.project_prefix}-eks-cluster" : var.eks_cluster_name}"
 }
 
 //noinspection MissingModule
 module "eks" {
-  source       = "terraform-aws-modules/eks/aws"
-  version      = ">= 2.3.1"
-  cluster_name = "${local.cluster_name}"
+  source          = "terraform-aws-modules/eks/aws"
+  version         = ">= 2.3.1"
+  cluster_name    = "${local.cluster_name}"
+  cluster_version = "1.12"
+
+  //  local_exec_interpreter = ["c:/Program Files/Git/bin/git-sh.exe", "-c"]
+  //  manage_aws_auth = false
 
   subnets = [
     "${module.vpc.private_subnets[0]}",
     "${module.vpc.private_subnets[1]}",
   ]
-
-  tags                            = "${local.eks_tags}"
-  vpc_id                          = "${module.vpc.vpc_id}"
-  cluster_endpoint_private_access = true
-  cluster_endpoint_public_access  = true
-
+  tags                                         = "${local.eks_tags}"
+  vpc_id                                       = "${module.vpc.vpc_id}"
+  cluster_endpoint_public_access               = "true"
+  cluster_endpoint_private_access              = "true"
+  kubeconfig_aws_authenticator_additional_args = "${local.kubectl_assume_role_args}"
   worker_additional_security_group_ids = [
     "${aws_security_group.whitelist.id}",
     "${aws_security_group.allow_ssh_from_bastion.id}",
   ]
-
-  kubeconfig_aws_authenticator_additional_args = "${local.kubectl_assume_role_args}"
-
   map_roles_count = 3
-
   map_roles = [
     {
       role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AdministratorAccess_fdd93031f4fbd3aa"
@@ -47,14 +46,8 @@ module "eks" {
       group    = "system:masters"
     },
   ]
-
-  kubeconfig_aws_authenticator_env_variables = {
-    AWS_PROFILE = "${var.aws_profile}"
-  }
-
   config_output_path = "${var.config_output_path}"
   worker_group_count = "${local.worker_asg_count}"
-
   worker_groups = [
     {
       subnets = "${module.vpc.private_subnets[0]}"
@@ -72,7 +65,6 @@ module "eks" {
       subnets       = "${module.vpc.private_subnets[1]}"
     },
   ]
-
   workers_group_defaults = {
     asg_desired_capacity = 1
     asg_max_size         = 25
@@ -82,10 +74,12 @@ module "eks" {
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
     enabled_metrics      = "GroupInServiceInstances,GroupDesiredCapacity"
+    kubelet_extra_args   = "--cluster-domain eks.${var.project_fqdn} --fail-swap-on=false --eviction-hard=memory.available<500Mi --system-reserved=memory=1Gi"
     bootstrap_extra_args = "--enable-docker-bridge true"
 
     pre_userdata = <<-EOF
-      echo "$(jq '."default-ulimits".nofile.Hard=65536 | ."default-ulimits".nofile.Soft=65536' /etc/docker/daemon.json)" > /etc/docker/daemon.json
+      bash <(curl https://gist.githubusercontent.com/rfvermut/4f141cbdfd107d95018731439ffe737d/raw/001cfdbf532d84c7307be4133883202dbcf96e58/add_swap.sh) 2
+      echo "$(jq '."default-ulimits".nofile.Hard=65536 | ."default-ulimits".nofile.Soft=65536 | ."default-ulimits".nofile.Name="NOFILE"' /etc/docker/daemon.json)" > /etc/docker/daemon.json
       systemctl restart docker
       EOF
   }
@@ -96,7 +90,7 @@ resource "aws_autoscaling_schedule" "tgi-friday" {
   count = "${local.worker_asg_count}"
 
   scheduled_action_name  = "friday-off"
-  recurrence             = "0 23 * * FRI"
+  recurrence             = "0 1 * * SAT"
   min_size               = -1
   max_size               = -1
   desired_capacity       = 0

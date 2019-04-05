@@ -26,7 +26,3 @@ variable "external_dns_txt_owner_id" {
   description = "Specify owner which will be put into TXT record"
   default     = ""
 }
-
-variable "kubeconfig" {
-  type = "string"
-}

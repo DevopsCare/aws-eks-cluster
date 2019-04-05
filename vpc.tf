@@ -13,8 +13,8 @@ module "vpc" {
 
   # TODO: use data to get AZS
   azs = [
-    "${var.aws_region}a",
-    "${var.aws_region}b",
+    "${local.aws_region}a",
+    "${local.aws_region}b",
   ]
 
   private_subnets = [
@@ -29,7 +29,7 @@ module "vpc" {
 }
 
 resource "aws_security_group" "whitelist" {
-  name        = "${var.project_prefix}-${local.cluster_name}-whilelist"
+  name        = "${var.project_prefix}-eks-whilelist"
   description = "Set of whitelisted IPs for ${var.project_prefix} + GitHub hooks"
   vpc_id      = "${module.vpc.vpc_id}"
 

@@ -57,7 +57,7 @@ resource "aws_instance" "bastion" {
 }
 
 resource "aws_security_group" "allow_ssh_from_bastion" {
-  name        = "${var.project_prefix}-${local.cluster_name}-bastion_ssh_access"
+  name        = "${var.project_prefix}-eks-bastion_ssh_access"
   description = "Allow SSH from bastion"
   vpc_id      = "${module.vpc.vpc_id}"
 
@@ -77,7 +77,7 @@ resource "aws_security_group" "allow_ssh_from_bastion" {
 }
 
 resource "aws_security_group" "bastion_incoming_ssh" {
-  name        = "${var.project_prefix}-${local.cluster_name}-bastion_incoming_ssh"
+  name        = "${var.project_prefix}-eks-bastion_incoming_ssh"
   description = "Allow SSH to bastion from world"
   vpc_id      = "${module.vpc.vpc_id}"
 
@@ -91,7 +91,7 @@ resource "aws_security_group" "bastion_incoming_ssh" {
 }
 
 resource "aws_security_group" "bastion_sg" {
-  name        = "${var.project_prefix}-${local.cluster_name}-bastion_sg"
+  name        = "${var.project_prefix}-eks-bastion_sg"
   description = "Bastion SG"
   vpc_id      = "${module.vpc.vpc_id}"
 
