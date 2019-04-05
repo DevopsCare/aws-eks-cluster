@@ -34,7 +34,7 @@ resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
 module "autoscaler" {
   source       = "modules/autoscaler"
   aws_region   = "${local.aws_region}"
-  cluster_name = "${var.project_prefix}-eks-cluster"
+  cluster_name = "${local.cluster_name}"
 }
 
 resource "helm_release" "overprovisioner" {

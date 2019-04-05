@@ -4,7 +4,7 @@ module "vpc" {
   version = ">=1.46.0"
   cidr    = "${var.vpc_cidr}"
   name    = "${local.vpc_name}"
-  tags    = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${var.project_prefix}-eks-cluster", "shared"))}"
+  tags    = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
 
   public_subnets = [
     "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 0)}",

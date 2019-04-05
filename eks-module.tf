@@ -1,6 +1,7 @@
 locals {
   worker_asg_count         = 4
   kubectl_assume_role_args = "${split(",", var.kubectl_assume_role != "" ? join(",",list("\"-r\"", "\"${var.kubectl_assume_role}\"")) : "")}"
+  cluster_name             = "${var.eks_cluster_name == "" ? "${var.project_prefix}-eks-cluster" : var.eks_cluster_name}"
 }
 
 //noinspection MissingModule
@@ -8,7 +9,7 @@ module "eks" {
   source = "terraform-aws-modules/eks/aws"
 
   version         = ">=2.3.1"
-  cluster_name    = "${var.project_prefix}-eks-cluster"
+  cluster_name    = "${local.cluster_name}"
   cluster_version = "1.12"
 
   //  local_exec_interpreter = ["c:/Program Files/Git/bin/git-sh.exe", "-c"]

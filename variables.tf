@@ -40,3 +40,9 @@ variable "shared_tgw_id" {
   type    = "string"
   default = ""
 }
+
+// This is workaround var and better left as is
+variable "eks_cluster_name" {
+  type    = "string"
+  default = ""
+}
