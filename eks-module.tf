@@ -6,8 +6,9 @@ locals {
 
 //noinspection MissingModule
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = ">= 2.3.1"
+  source = "terraform-aws-modules/eks/aws"
+
+  version         = ">=2.3.1"
   cluster_name    = "${local.cluster_name}"
   cluster_version = "1.12"
 
@@ -18,17 +19,20 @@ module "eks" {
     "${module.vpc.private_subnets[0]}",
     "${module.vpc.private_subnets[1]}",
   ]
+
   tags                                         = "${local.eks_tags}"
   vpc_id                                       = "${module.vpc.vpc_id}"
   cluster_endpoint_public_access               = "true"
   cluster_endpoint_private_access              = "true"
   kubeconfig_aws_authenticator_additional_args = "${local.kubectl_assume_role_args}"
+
   worker_additional_security_group_ids = [
     "${aws_security_group.whitelist.id}",
     "${aws_security_group.allow_ssh_from_bastion.id}",
   ]
+
   map_roles_count = 3
-  map_roles = [
+  map_roles       = [
     {
       role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AdministratorAccess_fdd93031f4fbd3aa"
       username = "eks-admin:{{SessionName}}"
@@ -46,9 +50,10 @@ module "eks" {
       group    = "system:masters"
     },
   ]
+
   config_output_path = "${var.config_output_path}"
   worker_group_count = "${local.worker_asg_count}"
-  worker_groups = [
+  worker_groups      = [
     {
       subnets = "${module.vpc.private_subnets[0]}"
     },
@@ -65,6 +70,7 @@ module "eks" {
       subnets       = "${module.vpc.private_subnets[1]}"
     },
   ]
+
   workers_group_defaults = {
     asg_desired_capacity = 1
     asg_max_size         = 25

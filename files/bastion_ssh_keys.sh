@@ -1,4 +1,5 @@
 #!/bin/bash -x
+
 filename=${0##*/}
 echo "`date +%F\ %H:%M:%S.%N`: [INFO] Invoking $filename" > /var/tmp/post-install-${filename}.log
 exec >> /var/tmp/post-install-${filename}.log 2>&1
