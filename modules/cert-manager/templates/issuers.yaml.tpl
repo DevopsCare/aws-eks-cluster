@@ -1,4 +1,4 @@
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: certmanager.k8s.io/v1beta1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
@@ -14,7 +14,7 @@ spec:
         route53:
           region: ${aws_region}
 ---
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: certmanager.k8s.io/v1beta1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
