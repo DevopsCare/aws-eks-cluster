@@ -22,7 +22,7 @@ resource "null_resource" "issuers" {
     EOT
   }
 
-  depends_on = ["null_resource.crd", "local_file.issuers"]
+  depends_on = ["local_file.issuers", "null_resource.crd", "helm_release.certmanager"]
 }
 
 resource "helm_release" "certmanager" {
@@ -58,7 +58,7 @@ resource "helm_release" "certmanager" {
     value = "aws"
   }
 
-  depends_on = ["null_resource.crd", "null_resource.issuers"]
+  depends_on = ["null_resource.crd"]
 
   lifecycle {
     ignore_changes = ["keyring"]
