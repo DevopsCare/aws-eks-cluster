@@ -2,7 +2,11 @@ alertmanager:
   service:
     annotations:
       fabric8.io/expose: "true"
-      fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx\ncertmanager.k8s.io/cluster-issuer: letsencrypt-prod"
+      fabric8.io/ingress.annotations: |-
+        kubernetes.io/ingress.class: nginx
+        certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/auth-signin: https://${oauth_proxy}/oauth2/start?rd=$request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://${oauth_proxy}/oauth2/auth
       fabric8.io/ingress.name: alertmanager
 
   resources:
@@ -30,7 +34,22 @@ grafana:
     annotations:
       fabric8.io/expose: "true"
       fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx\ncertmanager.k8s.io/cluster-issuer: letsencrypt-prod"
-      fabric8.io/ingress.name: grafana
+      fabric8.io/ingress.name: ${grafana_ingress_name}
+
+  grafana.ini:
+    server:
+      domain: ${grafana_ingress_name}.${namespace}.${domain}
+      root_url: "%(protocol)s://%(domain)s/"
+    auth:
+      oauth_auto_login: true
+    auth.generic_oauth:
+      enabled: true
+      allow_sign_up: true
+      client_id: oauth
+      client_secret: ${client_secret}
+      auth_url: https://${keycloak_domain}/auth/realms/weissr/protocol/openid-connect/auth
+      token_url: https://${keycloak_domain}/auth/realms/weissr/protocol/openid-connect/token
+      api_url: https://${keycloak_domain}/auth/realms/weissr/protocol/openid-connect/userinfo
 
   resources:
     limits:
@@ -46,7 +65,11 @@ prometheus:
   service:
     annotations:
       fabric8.io/expose: "true"
-      fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx\ncertmanager.k8s.io/cluster-issuer: letsencrypt-prod"
+      fabric8.io/ingress.annotations: |-
+        kubernetes.io/ingress.class: nginx
+        certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/auth-signin: https://${oauth_proxy}/oauth2/start?rd=$request_uri
+        nginx.ingress.kubernetes.io/auth-url: https://${oauth_proxy}/oauth2/auth
       fabric8.io/ingress.name: prometheus
 
   resources:

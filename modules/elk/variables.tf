@@ -2,8 +2,8 @@ variable "aws_region" {
   type = "string"
 }
 
-variable "domain" {
-  type = "string"
+variable "root_domain" {
+  default = "weissr.click"
 }
 
 variable "ebs_size" {

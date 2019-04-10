@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_security_group" "es" {
-  name   = "elasticsearch-${var.domain}"
+  name   = "elasticsearch-${var.root_domain}"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -20,7 +20,7 @@ resource "aws_iam_service_linked_role" "es" {
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = "${var.domain}"
+  domain_name           = "${var.root_domain}"
   elasticsearch_version = "${var.elasticsearch_version}"
 
   cluster_config {
@@ -53,7 +53,7 @@ resource "aws_elasticsearch_domain" "es" {
   CONFIG
 
   tags {
-    Domain = "${var.domain}"
+    Domain = "${var.root_domain}"
   }
 
   depends_on = [

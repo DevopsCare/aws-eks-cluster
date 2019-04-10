@@ -1,5 +1,5 @@
 provider "kubernetes" {
-  config_path = "${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster"
+  config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
 provider "helm" {
@@ -8,15 +8,15 @@ provider "helm" {
   tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.11.0"
 
   kubernetes = {
-    config_path = "${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster"
+    config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
   }
 }
 
 provider "keycloak" {
   client_id = "admin-cli"
   username  = "${var.keycloak_username}"
-  password  = "${module.keycloak-master.keycloak-password}"
-  url       = "https://${module.keycloak-master.keycloak-subdomain}.${var.project_fqdn}"
+  password  = "${module.keycloak.keycloak-password}"
+  url       = "https://${module.keycloak.keycloak-subdomain}.${var.project_fqdn}"
 }
 
 data "aws_caller_identity" "current" {}

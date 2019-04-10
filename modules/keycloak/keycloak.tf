@@ -11,7 +11,7 @@ resource "helm_release" "keycloak" {
 }
 
 resource "keycloak_realm" "realm" {
-  realm                = "default"
+  realm                = "${var.realm_name}"
   enabled              = true
   access_code_lifespan = "1h"
 }
@@ -37,4 +37,18 @@ resource "keycloak_ldap_user_federation" "ldap_user_federation" {
   connection_timeout = "5s"
   read_timeout       = "10s"
   vendor             = "AD"
+}
+
+resource "keycloak_openid_client" "openid_client" {
+  realm_id              = "${keycloak_realm.realm.realm}"
+  client_id             = "oauth"
+  name                  = "oauth"
+  enabled               = true
+  access_type           = "CONFIDENTIAL"
+  standard_flow_enabled = true
+
+  # TODO: do not use an asterisk
+  valid_redirect_uris = [
+    "*",
+  ]
 }

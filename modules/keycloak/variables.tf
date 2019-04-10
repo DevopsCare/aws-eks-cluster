@@ -18,6 +18,26 @@ variable "keycloak_password" {
   default = ""
 }
 
+variable "oauth_ingress_name" {
+  default = "oauth"
+}
+
+variable "oauth_proxy_chart_version" {
+  default = "0.11.0"
+}
+
+variable "oauth_proxy_release_name" {
+  default = "oauth2-proxy"
+}
+
+variable "oauth_proxy_namespace" {
+  default = "default"
+}
+
+variable "realm_name" {
+  default = "weissr.click"
+}
+
 variable "root_domain" {
   type = "string"
 }

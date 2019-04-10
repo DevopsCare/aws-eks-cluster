@@ -9,3 +9,10 @@ keycloak:
   persistence:
     deployPostgres: true
     dbVendor: postgres
+    dbPassword: ${postgres_password}
+
+postgresql:
+  postgresPassword: ${postgres_password}
+  persistence:
+    enabled: true
+    size: 2Gi

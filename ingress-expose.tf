@@ -17,12 +17,12 @@ resource "helm_release" "ingress" {
 
   set = {
     name  = "controller.config.whitelist-source-range"
-    value = "${join("\\,", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound))}"
+    value = "${join("\\,", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound, module.vpc.nat_public_ips))}"
   }
 
   set = {
     name  = "controller.service.loadBalancerSourceRanges"
-    value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound))}}"
+    value = "{${join(",", concat(var.ip_whitelist, local.github_meta_hooks, local.atlassian_inbound, formatlist("%s/32", module.vpc.nat_public_ips)))}}"
   }
 
   lifecycle {

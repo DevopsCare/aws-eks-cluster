@@ -4,11 +4,11 @@ You have to install Install [Keycloak provider](https://mrparkers.github.io/terr
 You may have a problem with [Keycloak provider](https://mrparkers.github.io/terraform-provider-keycloak/) because Terraform doesn't support depends_on for providers. In case of you're getting errors related to the keycloak module run:
 
 ```bash
-terraform apply -target module.keycloak-master.helm_release.keycloak
+terraform apply -target module.keycloak.helm_release.keycloak
 ```
 
 And then:
 
 ```bash
-terraform apply -target module.keycloak-master
+terraform apply -target module.keycloak
 ```

@@ -94,20 +94,12 @@ module "external-dns" {
   external_dns_txt_owner_id = "${var.project_prefix}-dns-public"
 }
 
-resource "helm_release" "prometheus-operator" {
-  name      = "prometheus-operator"
-  chart     = "stable/prometheus-operator"
-  namespace = "monitoring"
-  values    = ["${file("${path.module}/values/prometheus-operator.yaml")}"]
-
-  set = {
-    name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
-  }
-
-  lifecycle {
-    ignore_changes = ["keyring"]
-  }
+module "prometheus-operator" {
+  source                 = "modules/prometheus-operator"
+  domain                 = "${var.project_fqdn}"
+  keycloak_client_secret = "${module.keycloak.client-secret}"
+  keycloak_domain        = "${module.keycloak.keycloak-subdomain}.${var.project_fqdn}"
+  oauth_proxy_address    = "${module.keycloak.oauth-proxy-address}"
 }
 
 // TODO
