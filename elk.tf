@@ -1,9 +1,10 @@
 module "elk" {
-  source      = "modules/elk"
-  aws_region  = "${local.aws_region}"
-  root_domain = "${var.project_prefix}"
-  subnet_ids  = ["${module.vpc.private_subnets[0]}"]
-  vpc_id      = "${module.vpc.vpc_id}"
+  source              = "modules/elk"
+  aws_region          = "${local.aws_region}"
+  root_domain         = "${var.project_prefix}"
+  subnet_ids          = ["${module.vpc.private_subnets[0]}"]
+  vpc_id              = "${module.vpc.vpc_id}"
+  oauth_proxy_address = "${module.keycloak.oauth-proxy-address}"
 
   ip_whitelist   = ["10.0.0.0/8"]
   instance_count = "2"

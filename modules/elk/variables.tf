@@ -64,6 +64,10 @@ variable "kibana_version" {
   default = "6.4.3"
 }
 
+variable "oauth_proxy_address" {
+  type = "string"
+}
+
 variable "selfhosted_kibana_enabled" {
   description = "Enable deploy Kibana to the Kubernetes cluster "
   default     = true
