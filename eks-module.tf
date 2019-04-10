@@ -75,7 +75,7 @@ module "eks" {
     autoscaling_enabled  = 1
     key_name             = "${var.key_name}"
     enabled_metrics      = "GroupInServiceInstances,GroupDesiredCapacity"
-    kubelet_extra_args   = "--cluster-domain eks.${var.project_fqdn} --fail-swap-on=false --eviction-hard=memory.available<500Mi --system-reserved=memory=1Gi"
+    kubelet_extra_args   = "--fail-swap-on=false --eviction-hard=memory.available<500Mi --system-reserved=memory=1Gi"
     bootstrap_extra_args = "--enable-docker-bridge true"
 
     pre_userdata = <<-EOF

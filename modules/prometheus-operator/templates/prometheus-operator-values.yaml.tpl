@@ -29,6 +29,8 @@ prometheusOperator:
 
 grafana:
   adminPassword: sweetTapDancing
+  persistence:
+    enabled: true
 
   service:
     annotations:
