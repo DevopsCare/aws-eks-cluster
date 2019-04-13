@@ -30,7 +30,6 @@ resource "helm_release" "ingress" {
   }
 }
 
-// TODO this creates a job. we would want a daemon!
 resource "helm_release" "expose-default" {
   name      = "expose-default"
   chart     = "jx/exposecontroller"

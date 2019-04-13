@@ -34,6 +34,7 @@ resource "keycloak_ldap_user_federation" "ldap_user_federation" {
   users_dn           = "${var.users_dn}"
   bind_dn            = "${var.ldap_bind_dn}"
   bind_credential    = "${var.ldap_password}"
+  search_scope       = "SUBTREE"
   connection_timeout = "5s"
   read_timeout       = "10s"
   vendor             = "AD"
@@ -48,7 +49,5 @@ resource "keycloak_openid_client" "openid_client" {
   standard_flow_enabled = true
 
   # TODO: do not use an asterisk
-  valid_redirect_uris = [
-    "*",
-  ]
+  valid_redirect_uris = ["*"]
 }
