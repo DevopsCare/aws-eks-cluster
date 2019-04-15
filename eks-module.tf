@@ -87,6 +87,15 @@ module "eks" {
   }
 }
 
+resource "null_resource" "refresh_helm_cache" {
+  triggers {
+    template = "${module.eks.kubeconfig_filename}"
+  }
+  provisioner "local-exec" {
+    command = "helm repo update"
+  }
+}
+
 // Poor man's money saver
 resource "aws_autoscaling_schedule" "tgi-friday" {
   count = "${local.worker_asg_count}"
