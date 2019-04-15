@@ -1,10 +1,23 @@
+locals {
+  type_public  = {
+    "type" = "public"
+  }
+  type_private = {
+    "type" = "private"
+  }
+}
+
 //noinspection MissingModule
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = ">=1.46.0"
-  cidr    = "${var.vpc_cidr}"
-  name    = "${local.vpc_name}"
-  tags    = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
+  source                   = "terraform-aws-modules/vpc/aws"
+  version                  = ">=1.46.0"
+  cidr                     = "${var.vpc_cidr}"
+  name                     = "${local.vpc_name}"
+  tags                     = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
+  public_subnet_tags       = "${local.type_public}"
+  private_subnet_tags      = "${local.type_private}"
+  public_route_table_tags  = "${local.type_public}"
+  private_route_table_tags = "${local.type_private}"
 
   public_subnets = [
     "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 0)}",

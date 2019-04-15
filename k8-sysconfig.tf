@@ -97,11 +97,15 @@ module "external-dns" {
 module "prometheus-operator" {
   source                 = "modules/prometheus-operator"
   domain                 = "${var.project_fqdn}"
-  keycloak_client_secret = "${module.keycloak.client-secret}"
-  keycloak_domain        = "${module.keycloak.keycloak-subdomain}.${var.project_fqdn}"
-  oauth_proxy_address    = "${module.keycloak.oauth-proxy-address}"
+  keycloak_client_secret = "${var.keycloak_client_secret}"
+  keycloak_domain        = "${var.keycloak_domain}"
+  oauth_proxy_address    = "${var.keycloak_oauth_proxy_address}"
 }
 
-// TODO
-// kubectl patch storageclass gp2 -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-
+resource "null_resource" "gp2" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      kubectl patch --kubeconfig ${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster storageclass gp2 -p {"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}
+    EOT
+  }
+}
