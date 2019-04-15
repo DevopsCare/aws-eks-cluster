@@ -1,5 +1,5 @@
-output "kubeconfig" {
-  value = "${module.eks.kubeconfig}"
+output "kubeconfig_filename" {
+  value = "${module.eks.kubeconfig_filename}"
 }
 
 output "whitelist_sg_id" {
