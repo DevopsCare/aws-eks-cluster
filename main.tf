@@ -5,7 +5,7 @@ provider "kubernetes" {
 provider "helm" {
   version         = ">=0.9"
   service_account = "eks-admin"
-  tiller_image    = "gcr.io/kubernetes-helm/tiller:v2.11.0"
+  tiller_image    = "gcr.io/kubernetes-helm/tiller:${var.tiller_version}"
 
   kubernetes = {
     config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
