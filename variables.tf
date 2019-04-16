@@ -61,5 +61,5 @@ variable "eks_cluster_name" {
 }
 
 variable "tiller_version" {
-  default = "v2.11.0"
+  default = "latest"
 }

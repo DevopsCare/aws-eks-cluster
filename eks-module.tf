@@ -88,9 +88,6 @@ module "eks" {
 }
 
 resource "null_resource" "refresh_helm_cache" {
-  triggers {
-    template = "${module.eks.kubeconfig_filename}"
-  }
   provisioner "local-exec" {
     command = "helm repo update"
   }
