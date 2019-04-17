@@ -19,7 +19,7 @@ variable "kubectl_assume_role" {
 }
 
 variable "spot_price" {
-  default = "0.1"
+  default = ""
 }
 
 variable "key_name" {
