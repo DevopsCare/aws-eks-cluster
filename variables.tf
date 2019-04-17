@@ -24,6 +24,7 @@ variable "spot_price" {
 
 variable "key_name" {
   type = "string"
+  default = ""
 }
 
 variable "letsencrypt-email" {
