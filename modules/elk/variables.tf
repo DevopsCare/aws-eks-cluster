@@ -65,7 +65,8 @@ variable "kibana_version" {
 }
 
 variable "oauth_proxy_address" {
-  type = "string"
+  type    = "string"
+  default = ""
 }
 
 variable "selfhosted_kibana_enabled" {

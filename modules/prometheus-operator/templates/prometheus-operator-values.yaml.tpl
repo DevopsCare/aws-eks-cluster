@@ -2,12 +2,15 @@ alertmanager:
   service:
     annotations:
       fabric8.io/expose: "true"
+      fabric8.io/ingress.name: alertmanager
       fabric8.io/ingress.annotations: |-
         kubernetes.io/ingress.class: nginx
         certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+  %{ if keycloak_enabled }
         nginx.ingress.kubernetes.io/auth-signin: https://${oauth_proxy}/oauth2/start?rd=$request_uri
         nginx.ingress.kubernetes.io/auth-url: https://${oauth_proxy}/oauth2/auth
-      fabric8.io/ingress.name: alertmanager
+   %{ endif }
+
 
   resources:
     limits:
@@ -42,6 +45,8 @@ grafana:
     server:
       domain: ${grafana_ingress_name}.${namespace}.${domain}
       root_url: "%(protocol)s://%(domain)s/"
+
+  %{ if keycloak_enabled }
     auth:
       oauth_auto_login: true
     auth.generic_oauth:
@@ -52,6 +57,7 @@ grafana:
       auth_url: https://${keycloak_domain}/auth/realms/weissr/protocol/openid-connect/auth
       token_url: https://${keycloak_domain}/auth/realms/weissr/protocol/openid-connect/token
       api_url: https://${keycloak_domain}/auth/realms/weissr/protocol/openid-connect/userinfo
+  %{ endif }
 
   resources:
     limits:
@@ -67,12 +73,14 @@ prometheus:
   service:
     annotations:
       fabric8.io/expose: "true"
+      fabric8.io/ingress.name: prometheus
       fabric8.io/ingress.annotations: |-
         kubernetes.io/ingress.class: nginx
         certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+  %{ if keycloak_enabled }
         nginx.ingress.kubernetes.io/auth-signin: https://${oauth_proxy}/oauth2/start?rd=$request_uri
         nginx.ingress.kubernetes.io/auth-url: https://${oauth_proxy}/oauth2/auth
-      fabric8.io/ingress.name: prometheus
+  %{ endif }
 
   resources:
     limits:

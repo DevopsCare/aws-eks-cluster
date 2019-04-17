@@ -4,7 +4,7 @@ module "elk" {
   root_domain         = "${var.project_prefix}"
   subnet_ids          = ["${module.vpc.private_subnets[0]}"]
   vpc_id              = "${module.vpc.vpc_id}"
-  oauth_proxy_address = "${var.keycloak_oauth_proxy_address}"
+  oauth_proxy_address = "${var.keycloak_enabled ? var.keycloak_oauth_proxy_address : ""}"
 
   ip_whitelist   = ["10.0.0.0/8"]
   instance_count = "2"

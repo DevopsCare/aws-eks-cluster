@@ -97,6 +97,7 @@ module "external-dns" {
 module "prometheus-operator" {
   source                 = "modules/prometheus-operator"
   domain                 = "${var.project_fqdn}"
+  keycloak_enabled       = "${var.keycloak_enabled}"
   keycloak_client_secret = "${var.keycloak_client_secret}"
   keycloak_domain        = "${var.keycloak_domain}"
   oauth_proxy_address    = "${var.keycloak_oauth_proxy_address}"
