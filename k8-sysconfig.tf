@@ -106,7 +106,7 @@ module "prometheus-operator" {
 resource "null_resource" "gp2" {
   provisioner "local-exec" {
     command = <<-EOT
-      kubectl patch --kubeconfig ${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster storageclass gp2 -p {"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}
+      kubectl patch --kubeconfig ${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster storageclass gp2 -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
     EOT
   }
 }

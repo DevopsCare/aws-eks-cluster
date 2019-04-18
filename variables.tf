@@ -60,3 +60,7 @@ variable "eks_cluster_name" {
   type    = "string"
   default = ""
 }
+
+variable "tiller_version" {
+  default = "latest"
+}
