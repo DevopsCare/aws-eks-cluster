@@ -71,6 +71,7 @@ module "eks" {
     asg_desired_capacity = 1
     asg_max_size         = 25
     asg_min_size         = 0
+    asg_force_delete     = true
     instance_type        = "t3.large"
     spot_price           = "${var.spot_price}"
     autoscaling_enabled  = 1
