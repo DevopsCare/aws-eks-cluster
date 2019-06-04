@@ -10,7 +10,7 @@ locals {
 //noinspection MissingModule
 module "vpc" {
   source                   = "terraform-aws-modules/vpc/aws"
-  version                  = ">=1.46.0"
+  version                  = ">=1.46.0,<2.0.0"
   cidr                     = "${var.vpc_cidr}"
   name                     = "${local.vpc_name}"
   tags                     = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
