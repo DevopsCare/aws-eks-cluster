@@ -3,7 +3,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version         = ">=0.9"
+  version         = "0.9"
   service_account = "eks-admin"
   tiller_image    = "gcr.io/kubernetes-helm/tiller:${var.tiller_version}"
 
