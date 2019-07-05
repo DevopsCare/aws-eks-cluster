@@ -6,9 +6,9 @@ locals {
 
 //noinspection MissingModule
 module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+  source = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v4.0.2"
 
-  version         = ">=2.3.1"
+#  version         = ">=2.3.1"
   cluster_name    = "${local.cluster_name}"
   cluster_version = "1.12"
   tags            = "${local.eks_tags}"
