@@ -12,7 +12,7 @@ resource "local_file" "issuers" {
 }
 
 resource "null_resource" "issuers" {
-  triggers {
+  triggers = {
     issuers = "${local_file.issuers.id}"
   }
 

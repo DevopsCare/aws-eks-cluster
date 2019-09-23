@@ -1,5 +1,5 @@
 locals {
-  type_public  = {
+  type_public = {
     "type" = "public"
   }
   type_private = {
@@ -9,19 +9,24 @@ locals {
 
 //noinspection MissingModule
 module "vpc" {
-  source                   = "terraform-aws-modules/vpc/aws"
-  version                  = ">=1.46.0,<2.0.0"
-  cidr                     = "${var.vpc_cidr}"
-  name                     = "${local.vpc_name}"
-  tags                     = "${merge(local.vpc_tags, map("kubernetes.io/cluster/${local.cluster_name}", "shared"))}"
-  public_subnet_tags       = "${local.type_public}"
-  private_subnet_tags      = "${local.type_private}"
-  public_route_table_tags  = "${local.type_public}"
-  private_route_table_tags = "${local.type_private}"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = ">=2.15.0"
+  cidr    = var.vpc_cidr
+  name    = local.vpc_name
+  tags = merge(
+    local.vpc_tags,
+    {
+      "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    },
+  )
+  public_subnet_tags       = local.type_public
+  private_subnet_tags      = local.type_private
+  public_route_table_tags  = local.type_public
+  private_route_table_tags = local.type_private
 
   public_subnets = [
-    "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 0)}",
-    "${cidrsubnet( cidrsubnet(var.vpc_cidr, 2, 2), 4, 1)}",
+    cidrsubnet(cidrsubnet(var.vpc_cidr, 2, 2), 4, 0),
+    cidrsubnet(cidrsubnet(var.vpc_cidr, 2, 2), 4, 1),
   ]
 
   # TODO: use data to get AZS
@@ -31,8 +36,8 @@ module "vpc" {
   ]
 
   private_subnets = [
-    "${cidrsubnet(var.vpc_cidr, 2, 0)}",
-    "${cidrsubnet(var.vpc_cidr, 2, 1)}",
+    cidrsubnet(var.vpc_cidr, 2, 0),
+    cidrsubnet(var.vpc_cidr, 2, 1),
   ]
 
   enable_dns_hostnames = true
@@ -44,26 +49,27 @@ module "vpc" {
 resource "aws_security_group" "whitelist" {
   name        = "${var.project_prefix}-eks-whilelist"
   description = "Set of whitelisted IPs for ${var.project_prefix} + GitHub hooks"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = -1
-    cidr_blocks = "${var.ip_whitelist}"
+    cidr_blocks = var.ip_whitelist
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${local.github_meta_hooks}", "${local.atlassian_inbound}"]
+    cidr_blocks = concat(local.github_meta_hooks, local.atlassian_inbound)
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["${local.github_meta_hooks}", "${local.atlassian_inbound}"]
+    cidr_blocks = concat(local.github_meta_hooks, local.atlassian_inbound)
   }
 }
+

@@ -1,17 +1,16 @@
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {
+}
 
 resource "aws_security_group" "es" {
   name   = "elasticsearch-${var.root_domain}"
-  vpc_id = "${var.vpc_id}"
+  vpc_id = var.vpc_id
 
   ingress {
     from_port = 443
     to_port   = 443
     protocol  = "tcp"
 
-    cidr_blocks = [
-      "${var.ip_whitelist}",
-    ]
+    cidr_blocks = var.ip_whitelist
   }
 }
 
@@ -20,22 +19,22 @@ resource "aws_iam_service_linked_role" "es" {
 }
 
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = "${var.root_domain}"
-  elasticsearch_version = "${var.elasticsearch_version}"
+  domain_name           = var.root_domain
+  elasticsearch_version = var.elasticsearch_version
 
   cluster_config {
-    instance_count = "${var.instance_count}"
-    instance_type  = "${var.instance_type}"
+    instance_count = var.instance_count
+    instance_type  = var.instance_type
   }
 
   vpc_options {
-    subnet_ids         = ["${var.subnet_ids}"]
-    security_group_ids = ["${aws_security_group.es.id}"]
+    subnet_ids         = var.subnet_ids
+    security_group_ids = [aws_security_group.es.id]
   }
 
   ebs_options {
     ebs_enabled = true
-    volume_size = "${var.ebs_size}"
+    volume_size = var.ebs_size
   }
 
   access_policies = <<-CONFIG
@@ -50,13 +49,13 @@ resource "aws_elasticsearch_domain" "es" {
           }
       ]
   }
-  CONFIG
+CONFIG
 
-  tags {
-    Domain = "${var.root_domain}"
+
+  tags = {
+    Domain = var.root_domain
   }
 
-  depends_on = [
-    "aws_iam_service_linked_role.es",
-  ]
+  depends_on = [aws_iam_service_linked_role.es]
 }
+

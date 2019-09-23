@@ -2,7 +2,7 @@
 data "template_file" "issuers" {
   template = "${file("${path.module}/templates/issuers.yaml.tpl")}"
 
-  vars {
+  vars = {
     email      = "${var.email}"
     aws_region = "${var.aws_region}"
   }

@@ -1,5 +1,5 @@
 variable "aws_region" {
-  type = "string"
+  type = string
 }
 
 variable "root_domain" {
@@ -19,7 +19,7 @@ variable "elasticsearch_version" {
 }
 
 variable "curator_enabled" {
-  default = true
+  default = 1
 }
 
 variable "curator_chart_version" {
@@ -44,7 +44,7 @@ variable "instance_type" {
 
 variable "ip_whitelist" {
   description = "List of IP's which will have an access to Kibana"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -65,19 +65,20 @@ variable "kibana_version" {
 }
 
 variable "oauth_proxy_address" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "selfhosted_kibana_enabled" {
   description = "Enable deploy Kibana to the Kubernetes cluster "
-  default     = true
+  default     = 1
 }
 
 variable "subnet_ids" {
-  type = "list"
+  type = list(string)
 }
 
 variable "vpc_id" {
-  type = "string"
+  type = string
 }
+

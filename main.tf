@@ -1,22 +1,26 @@
 provider "kubernetes" {
+  version     = "1.9.0"
   config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
 }
 
 provider "helm" {
-  version         = "0.9"
+  version         = "0.10.2"
   service_account = "eks-admin"
   tiller_image    = "gcr.io/kubernetes-helm/tiller:${var.tiller_version}"
 
-  kubernetes = {
+  kubernetes {
     config_path = "${var.config_output_path}/kubeconfig_${local.cluster_name}"
   }
 }
 
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
+data "aws_caller_identity" "current" {
+}
+
+data "aws_region" "current" {
+}
 
 locals {
-  aws_region = "${data.aws_region.current.name}"
+  aws_region = data.aws_region.current.name
   vpc_name   = "${var.project_prefix}-vpc"
 
   vpc_tags = {
@@ -52,3 +56,4 @@ locals {
     "13.52.5.0/25",
   ]
 }
+

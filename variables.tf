@@ -1,18 +1,24 @@
-variable "project_prefix" {}
-variable "project_fqdn" {}
-variable "project_rev_fqdn" {}
+variable "project_prefix" {
+}
+
+variable "project_fqdn" {
+}
+
+variable "project_rev_fqdn" {
+}
 
 variable "vpc_cidr" {
-  type    = "string"
+  type    = string
   default = "172.31.0.0/16"
 }
 
 variable "ip_whitelist" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
 
-variable "config_output_path" {}
+variable "config_output_path" {
+}
 
 variable "kubectl_assume_role" {
   default = ""
@@ -23,7 +29,7 @@ variable "spot_price" {
 }
 
 variable "key_name" {
-  type = "string"
+  type    = string
   default = ""
 }
 
@@ -33,7 +39,7 @@ variable "letsencrypt-email" {
 }
 
 variable "extra_policy_arn" {
-  type    = "string"
+  type    = string
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
@@ -41,26 +47,29 @@ variable "extra_policy_arn" {
 variable "keycloak_enabled" {
   default = false
 }
+
 variable "keycloak_client_secret" {
-  type    = "string"
-  default = ""
-}
-variable "keycloak_domain" {
-  type    = "string"
-  default = ""
-}
-variable "keycloak_oauth_proxy_address" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
+variable "keycloak_domain" {
+  type    = string
+  default = ""
+}
+
+variable "keycloak_oauth_proxy_address" {
+  type    = string
+  default = ""
+}
 
 // This is workaround var and better left as is
 variable "eks_cluster_name" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "tiller_version" {
-  default = "latest"
+  default = "v2.14.3"
 }
+

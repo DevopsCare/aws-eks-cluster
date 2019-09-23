@@ -4,26 +4,26 @@ data "helm_repository" "coreos" {
 }
 
 resource "kubernetes_service_account" "eks-admin" {
-  metadata = {
+  metadata {
     name      = "eks-admin"
     namespace = "kube-system"
   }
 }
 
 resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
-  depends_on = ["kubernetes_service_account.eks-admin"]
+  depends_on = [kubernetes_service_account.eks-admin]
 
-  metadata = {
+  metadata {
     name = "cluster-admin--kube-system-eks-admin"
   }
 
-  role_ref = {
+  role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
     name      = "cluster-admin"
   }
 
-  subject = {
+  subject {
     api_group = ""
     kind      = "ServiceAccount"
     name      = "eks-admin"
@@ -32,24 +32,24 @@ resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
 }
 
 module "autoscaler" {
-  source       = "modules/autoscaler"
-  aws_region   = "${local.aws_region}"
-  cluster_name = "${local.cluster_name}"
+  source       = "./modules/autoscaler"
+  aws_region   = local.aws_region
+  cluster_name = local.cluster_name
 }
 
 resource "helm_release" "overprovisioner" {
   name      = "overprovisioner"
   chart     = "stable/cluster-overprovisioner"
   namespace = "kube-system"
-  values    = ["${file("${path.module}/values/overprovisioner.yaml")}"]
+  values    = [file("${path.module}/values/overprovisioner.yaml")]
 
-  set = {
+  set {
     name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
+    value = module.eks.cluster_id
   }
 
   lifecycle {
-    ignore_changes = ["keyring"]
+    ignore_changes = [keyring]
   }
 }
 
@@ -59,16 +59,16 @@ resource "helm_release" "metrics-server" {
   namespace = "kube-system"
 
   values = [
-    "${file("${path.module}/values/metrics-server.yaml")}",
+    file("${path.module}/values/metrics-server.yaml"),
   ]
 
-  set = {
+  set {
     name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
+    value = module.eks.cluster_id
   }
 
   lifecycle {
-    ignore_changes = ["keyring"]
+    ignore_changes = [keyring]
   }
 }
 
@@ -76,37 +76,39 @@ resource "helm_release" "kubernetes-dashboard" {
   name      = "kubernetes-dashboard"
   chart     = "stable/kubernetes-dashboard"
   namespace = "kube-system"
-  values    = ["${file("${path.module}/values/dashboard.yaml")}"]
+  values    = [file("${path.module}/values/dashboard.yaml")]
 
-  set = {
+  set {
     name  = "dummy.depends_on"
-    value = "${module.eks.cluster_id}"
+    value = module.eks.cluster_id
   }
 
   lifecycle {
-    ignore_changes = ["keyring"]
+    ignore_changes = [keyring]
   }
 }
 
 module "external-dns" {
-  source                    = "modules/external-dns"
-  aws_region                = "${local.aws_region}"
+  source                    = "./modules/external-dns"
+  aws_region                = local.aws_region
   external_dns_txt_owner_id = "${var.project_prefix}-dns-public"
 }
 
 module "prometheus-operator" {
-  source                 = "modules/prometheus-operator"
-  domain                 = "${var.project_fqdn}"
-  keycloak_enabled       = "${var.keycloak_enabled}"
-  keycloak_client_secret = "${var.keycloak_client_secret}"
-  keycloak_domain        = "${var.keycloak_domain}"
-  oauth_proxy_address    = "${var.keycloak_oauth_proxy_address}"
+  source                 = "./modules/prometheus-operator"
+  domain                 = var.project_fqdn
+  keycloak_enabled       = var.keycloak_enabled
+  keycloak_client_secret = var.keycloak_client_secret
+  keycloak_domain        = var.keycloak_domain
+  oauth_proxy_address    = var.keycloak_oauth_proxy_address
 }
 
 resource "null_resource" "gp2" {
   provisioner "local-exec" {
     command = <<-EOT
       kubectl patch --kubeconfig ${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster storageclass gp2 -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-    EOT
+EOT
+
   }
 }
+

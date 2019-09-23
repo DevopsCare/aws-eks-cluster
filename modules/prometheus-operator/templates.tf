@@ -1,7 +1,7 @@
 data "template_file" "prometheus-operator-values" {
   template = "${file("${path.module}/templates/prometheus-operator-values.yaml.tpl")}"
 
-  vars {
+  vars = {
     grafana_ingress_name = "${var.grafana_ingress_name}"
     domain               = "${var.domain}"
 
