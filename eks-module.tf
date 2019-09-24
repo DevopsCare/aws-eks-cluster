@@ -15,6 +15,9 @@ module "eks" {
   cluster_version = "1.13"
   tags            = local.eks_tags
 
+  cluster_create_timeout = "1h"
+  cluster_delete_timeout = "1h"
+
   //  local_exec_interpreter = ["c:/Program Files/Git/bin/git-sh.exe", "-c"]
   //  manage_aws_auth = false
 
@@ -94,12 +97,6 @@ module "eks" {
       systemctl restart docker
 EOF
 
-  }
-}
-
-resource "null_resource" "refresh_helm_cache" {
-  provisioner "local-exec" {
-    command = "helm repo update"
   }
 }
 

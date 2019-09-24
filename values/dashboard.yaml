@@ -1,5 +1,0 @@
-# DEV mode
-rbac:
-  clusterAdminRole: true
-
-enableSkipLogin: true
