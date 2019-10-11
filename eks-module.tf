@@ -1,16 +1,11 @@
 locals {
-  kubectl_assume_role_args = split(
-    ",",
-    var.kubectl_assume_role != "" ? join(",", ["\"-r\"", "\"${var.kubectl_assume_role}\""]) : "",
-  )
-  cluster_name = var.eks_cluster_name == "" ? "${var.project_prefix}-eks-cluster" : var.eks_cluster_name
+  kubectl_assume_role_args = split(",", var.kubectl_assume_role != "" ? join(",", ["\"-r\"", "\"${var.kubectl_assume_role}\""]) : "", )
+  cluster_name             = "${var.project_prefix}-eks-cluster"
 }
 
 //noinspection MissingModule
 module "eks" {
-  source = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v6.0.0"
-
-  #  version         = ">=2.3.1"
+  source          = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v6.0.0"
   cluster_name    = local.cluster_name
   cluster_version = "1.13"
   tags            = local.eks_tags
@@ -18,13 +13,10 @@ module "eks" {
   cluster_create_timeout = "1h"
   cluster_delete_timeout = "1h"
 
-  //  local_exec_interpreter = ["c:/Program Files/Git/bin/git-sh.exe", "-c"]
-  //  manage_aws_auth = false
-
-  vpc_id                          = module.vpc.vpc_id
-  subnets                         = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
-  cluster_endpoint_public_access  = "true"
-  cluster_endpoint_private_access = "true"
+  vpc_id                               = module.vpc.vpc_id
+  subnets                              = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
+  cluster_endpoint_public_access       = "true"
+  cluster_endpoint_private_access      = "true"
   worker_additional_security_group_ids = [
     aws_security_group.whitelist.id,
     aws_security_group.allow_ssh_from_bastion.id,
@@ -32,24 +24,12 @@ module "eks" {
 
   kubeconfig_aws_authenticator_additional_args = local.kubectl_assume_role_args
 
-  map_roles = [
-    {
-      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_AdministratorAccess_fdd93031f4fbd3aa"
-      username = "eks-admin:{{SessionName}}"
-      groups   = ["system:masters"]
-    },
-    {
-      // TODO needs magic? Needs special named role?
-      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_SystemAdministrator_fdd93031f4fbd3aa"
-      username = "eks-admin:{{SessionName}}"
-      groups   = ["system:masters"]
-    },
-    {
-      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSReservedSSO_PowerUserAccess_6aa8e8dbe8829cce"
-      username = "eks-admin:{{SessionName}}"
-      groups   = ["system:masters"]
-    },
-  ]
+  map_roles = [for role in var.eks_authorized_roles :
+  {
+    rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${role}"
+    username = "eks-admin:{{SessionName}}"
+    groups   = ["system:masters"]
+  }]
 
   config_output_path = "${var.config_output_path}/"
 
@@ -192,4 +172,3 @@ resource "aws_iam_role_policy" "eks-default-role" {
   role   = module.eks.worker_iam_role_name
   policy = data.aws_iam_policy_document.eks-default-role.json
 }
-

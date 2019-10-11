@@ -33,14 +33,12 @@ variable "key_name" {
   default = ""
 }
 
+variable "eks_authorized_roles" {
+  type    = list(string)
+  default = []
+}
+
 variable "extra_policy_arn" {
   type    = string
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
-
-// This is workaround var and better left as is
-variable "eks_cluster_name" {
-  type    = string
-  default = ""
-}
-
