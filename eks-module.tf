@@ -5,7 +5,7 @@ locals {
 
 //noinspection MissingModule
 module "eks" {
-  source          = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v6.0.0"
+  source          = "github.com/terraform-aws-modules/terraform-aws-eks?ref=v6.0.2"
   cluster_name    = local.cluster_name
   cluster_version = "1.13"
   tags            = local.eks_tags
@@ -33,38 +33,17 @@ module "eks" {
 
   config_output_path = "${var.config_output_path}/"
 
-  worker_groups = [
-    {
-      subnets = [
-        module.vpc.private_subnets[0]
-      ]
-    },
-    {
-      subnets = [
-        module.vpc.private_subnets[1]
-      ]
-    },
-    {
-      // Bigger instances
-      instance_type = "t3.2xlarge"
-      subnets       = [
-        module.vpc.private_subnets[0]
-      ]
-    },
-    {
-      instance_type = "t3.2xlarge"
-      subnets       = [
-        module.vpc.private_subnets[1]
-      ]
-    },
-  ]
+  worker_groups = [for item in setproduct(var.instance_types, module.vpc.private_subnets):
+  {
+    instance_type = item[0]
+    subnets       = [item[1]]
+  }]
 
   workers_group_defaults = {
     asg_desired_capacity = 1
     asg_max_size         = 25
     asg_min_size         = 0
     asg_force_delete     = true
-    instance_type        = "t3.large"
     spot_price           = var.spot_price
     autoscaling_enabled  = true
     key_name             = var.key_name

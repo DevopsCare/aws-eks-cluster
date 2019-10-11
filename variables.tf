@@ -38,6 +38,11 @@ variable "eks_authorized_roles" {
   default = []
 }
 
+variable "instance_types" {
+  type    = list(string)
+  default = ["t3.large", "t3.2xlarge"]
+}
+
 variable "extra_policy_arn" {
   type    = string
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
