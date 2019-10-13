@@ -43,6 +43,18 @@ variable "instance_types" {
   default = ["t3.large", "t3.2xlarge"]
 }
 
+variable "worker_groups" {
+  type    = any
+  default = [
+    {
+      instance_type = "t3.large"
+    },
+    {
+      instance_type = "t3.2xlarge"
+    }
+  ]
+}
+
 variable "extra_policy_arn" {
   type    = string
   default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"

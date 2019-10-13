@@ -34,11 +34,14 @@ module "eks" {
 
   config_output_path = "${var.config_output_path}/"
 
-  worker_groups = [for item in setproduct(var.instance_types, module.vpc.private_subnets):
-  {
-    instance_type = item[0]
-    subnets       = [item[1]]
-  }]
+  worker_groups = flatten([
+  for group in var.worker_groups: [
+  for subnet in module.vpc.private_subnets:
+  merge(group, {
+    subnets = [subnet]
+  })
+  ]])
+
 
   workers_group_defaults = {
     asg_desired_capacity = 1
