@@ -65,7 +65,7 @@ EOF
 
 // Poor man's money saver
 resource "aws_autoscaling_schedule" "tgi-friday" {
-  count = 4
+  count = length(module.eks.workers_asg_names)
 
   scheduled_action_name  = "friday-off"
   recurrence             = "0 1 * * SAT"
