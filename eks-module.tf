@@ -6,7 +6,7 @@ locals {
 //noinspection MissingModule
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "6.0.2"
+  version         = "8.1.0"
   cluster_name    = local.cluster_name
   cluster_version = "1.14"
   tags            = local.eks_tags
@@ -14,15 +14,17 @@ module "eks" {
   cluster_create_timeout = "1h"
   cluster_delete_timeout = "1h"
 
-  vpc_id                               = module.vpc.vpc_id
-  subnets                              = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
-  cluster_endpoint_public_access       = "true"
-  cluster_endpoint_private_access      = "true"
+  vpc_id                          = module.vpc.vpc_id
+  subnets                         = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
+  cluster_endpoint_private_access = "true"
+  cluster_endpoint_public_access  = "true"
+
   worker_additional_security_group_ids = [
     aws_security_group.whitelist.id,
     aws_security_group.allow_ssh_from_bastion.id,
   ]
 
+  kubeconfig_name                              = "${local.cluster_name}.${local.aws_region}"
   kubeconfig_aws_authenticator_additional_args = local.kubectl_assume_role_args
 
   map_roles = [for role in var.eks_authorized_roles :
@@ -32,6 +34,7 @@ module "eks" {
     groups   = ["system:masters"]
   }]
 
+  write_kubeconfig   = true
   config_output_path = "${var.config_output_path}/"
 
   worker_groups = flatten([
