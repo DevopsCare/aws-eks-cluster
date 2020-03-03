@@ -31,5 +31,5 @@ output "kubernetes_token" {
 }
 
 output "cad3_superuser" {
-  value = var.cad3_superuser ? aws_iam_role.cad3_superuser : tuple()
+  value = var.cad3_superuser ? aws_iam_role.cad3_superuser : []
 }
