@@ -8,7 +8,7 @@ module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "8.1.0"
   cluster_name    = local.cluster_name
-  cluster_version = "1.14"
+  cluster_version = "1.15"
   tags            = local.eks_tags
 
   cluster_create_timeout = "1h"
