@@ -44,7 +44,7 @@ module "vpc" {
   enable_dns_support   = true
   enable_nat_gateway   = true
   single_nat_gateway   = true
-  enable_s3_endpoint = true
+  enable_s3_endpoint   = true
 }
 
 resource "aws_security_group" "whitelist" {
@@ -73,4 +73,3 @@ resource "aws_security_group" "whitelist" {
     cidr_blocks = concat(local.github_meta_hooks, local.atlassian_inbound)
   }
 }
-

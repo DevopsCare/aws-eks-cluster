@@ -28,21 +28,21 @@ module "eks" {
   kubeconfig_aws_authenticator_additional_args = local.kubectl_assume_role_args
 
   map_roles = [for role in var.eks_authorized_roles :
-  {
-    rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${role}"
-    username = "eks-admin:{{SessionName}}"
-    groups   = ["system:masters"]
+    {
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${role}"
+      username = "eks-admin:{{SessionName}}"
+      groups   = ["system:masters"]
   }]
 
   write_kubeconfig   = true
   config_output_path = "${var.config_output_path}/"
 
   worker_groups = flatten([
-  for group in var.worker_groups: [
-  for subnet in module.vpc.private_subnets:
-  merge(group, {
-    subnets = [subnet]
-  })
+    for group in var.worker_groups : [
+      for subnet in module.vpc.private_subnets :
+      merge(group, {
+        subnets = [subnet]
+      })
   ]])
 
 

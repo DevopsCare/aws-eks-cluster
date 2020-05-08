@@ -1,11 +1,6 @@
-variable "project_prefix" {
-}
-
-variable "project_fqdn" {
-}
-
-variable "project_rev_fqdn" {
-}
+variable "project_prefix" {}
+variable "project_fqdn" {}
+variable "project_rev_fqdn" {}
 
 variable "vpc_cidr" {
   type    = string
@@ -17,10 +12,10 @@ variable "ip_whitelist" {
   default = []
 }
 
-variable "config_output_path" {
-}
+variable "config_output_path" {}
 
 variable "kubectl_assume_role" {
+  type    = string
   default = ""
 }
 
@@ -44,7 +39,7 @@ variable "instance_types" {
 }
 
 variable "worker_groups" {
-  type    = any
+  type = list(map(string))
   default = [
     {
       instance_type = "t3.large"
@@ -61,6 +56,11 @@ variable "extra_policy_arn" {
 }
 
 variable "cad3_superuser" {
+  type    = bool
+  default = false
+}
+
+variable "enable_bastion" {
   type    = bool
   default = false
 }
