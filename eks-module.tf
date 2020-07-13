@@ -1,6 +1,26 @@
 locals {
   kubectl_assume_role_args = split(",", var.kubectl_assume_role != "" ? join(",", ["\"-r\"", "\"${var.kubectl_assume_role}\""]) : "", )
   cluster_name             = "${var.project_prefix}-eks-cluster"
+
+  worker_groups = flatten([
+    for group in var.worker_groups : [
+      for subnet in module.vpc.private_subnets :
+      merge(group, {
+        subnets = [subnet]
+        tags = [
+          {
+            "key"                 = "k8s.io/cluster-autoscaler/enabled"
+            "propagate_at_launch" = "false"
+            "value"               = "true"
+          },
+          {
+            "key"                 = "k8s.io/cluster-autoscaler/${local.cluster_name}"
+            "propagate_at_launch" = "false"
+            "value"               = "true"
+          }
+        ]
+      })
+  ]])
 }
 
 //noinspection MissingModule
@@ -38,13 +58,7 @@ module "eks" {
   write_kubeconfig   = true
   config_output_path = "${var.config_output_path}/"
 
-  worker_groups = flatten([
-    for group in var.worker_groups : [
-      for subnet in module.vpc.private_subnets :
-      merge(group, {
-        subnets = [subnet]
-      })
-  ]])
+  worker_groups = local.worker_groups
 
 
   workers_group_defaults = {
