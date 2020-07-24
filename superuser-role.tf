@@ -1,6 +1,6 @@
 resource "aws_iam_role" "cad3_superuser" {
   count = var.cad3_superuser ? 1 : 0
-  name  = "EKS-Role-Superuser"
+  name  = "EKS-Role-Superuser-${var.project_prefix}"
   path  = "/"
 
   assume_role_policy = <<EOF
@@ -30,7 +30,7 @@ EOF
 
 resource "aws_iam_policy" "cad3_superuser" {
   count       = var.cad3_superuser ? 1 : 0
-  name        = "Cad3Superuser"
+  name        = "Cad3Superuser-${var.project_prefix}"
   description = "Superuser Access"
 
   policy = <<EOF
