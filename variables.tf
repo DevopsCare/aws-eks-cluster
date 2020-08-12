@@ -82,3 +82,8 @@ variable "enable_bastion" {
   type    = bool
   default = false
 }
+
+variable "ssh_keys" {
+  type    = list(string)
+  default = []
+}

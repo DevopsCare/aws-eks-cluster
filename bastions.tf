@@ -62,13 +62,15 @@ resource "aws_instance" "bastion" {
   subnet_id     = module.vpc.public_subnets[0]
 
   vpc_security_group_ids = [
-    aws_security_group.bastion_sg.id,
-    aws_security_group.bastion_incoming_ssh.id,
+    aws_security_group.bastion_sg[count.index].id,
+    aws_security_group.bastion_incoming_ssh[count.index].id,
   ]
 
-  key_name  = var.key_name
-  user_data = file("${path.module}/files/bastion_ssh_keys.sh")
-  tags      = local.bastion_tags
+  key_name = var.key_name
+  user_data = templatefile("${path.module}/templates/bastion_ssh_keys.sh.tmpl", {
+    ssh_keys = var.ssh_keys
+  })
+  tags = local.bastion_tags
 
   lifecycle {
     ignore_changes = [ami]
@@ -79,19 +81,20 @@ resource "aws_security_group" "allow_ssh_from_bastion" {
   name        = "${var.project_prefix}-eks-bastion_ssh_access"
   description = "Allow SSH from bastion"
   vpc_id      = module.vpc.vpc_id
+  count       = var.enable_bastion ? 1 : 0
 
   ingress {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_sg.id]
+    security_groups = [aws_security_group.bastion_sg[count.index].id]
   }
 
   egress {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_sg.id]
+    security_groups = [aws_security_group.bastion_sg[count.index].id]
   }
 }
 
@@ -99,6 +102,7 @@ resource "aws_security_group" "bastion_incoming_ssh" {
   name        = "${var.project_prefix}-eks-bastion_incoming_ssh"
   description = "Allow SSH to bastion from world"
   vpc_id      = module.vpc.vpc_id
+  count       = var.enable_bastion ? 1 : 0
 
   ingress {
     from_port = 22
@@ -113,6 +117,7 @@ resource "aws_security_group" "bastion_sg" {
   name        = "${var.project_prefix}-eks-bastion_sg"
   description = "Bastion SG"
   vpc_id      = module.vpc.vpc_id
+  count       = var.enable_bastion ? 1 : 0
 
   egress {
     from_port = 0

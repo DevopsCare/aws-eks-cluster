@@ -58,10 +58,10 @@ module "eks" {
   cluster_endpoint_private_access = "true"
   cluster_endpoint_public_access  = "true"
 
-  worker_additional_security_group_ids = [
+  worker_additional_security_group_ids = var.enable_bastion ? [
     aws_security_group.whitelist.id,
-    aws_security_group.allow_ssh_from_bastion.id,
-  ]
+    aws_security_group.allow_ssh_from_bastion[0].id,
+  ] : [aws_security_group.whitelist.id]
 
   kubeconfig_name                              = "${local.cluster_name}.${local.aws_region}"
   kubeconfig_aws_authenticator_additional_args = local.kubectl_assume_role_args
