@@ -42,7 +42,6 @@ locals {
   }
 
   eks_tags = {
-    Name        = "${var.project_prefix}-eks"
     Environment = "${var.project_prefix}-infra"
   }
 
