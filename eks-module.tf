@@ -44,9 +44,9 @@ module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "v12.1.0"
   cluster_name    = local.cluster_name
-  cluster_version = "1.16"
+  cluster_version = "1.17"
   tags            = local.eks_tags
-  enable_irsa     = true
+  enable_irsa     = false
 
   cluster_create_timeout = "1h"
   cluster_delete_timeout = "1h"
