@@ -42,19 +42,21 @@ locals {
 //noinspection MissingModule
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v12.1.0"
+  version         = "v13.0.0"
   cluster_name    = local.cluster_name
-  cluster_version = "1.17"
+  cluster_version = "1.18" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
   tags            = local.eks_tags
   enable_irsa     = false
 
   cluster_create_timeout = "1h"
   cluster_delete_timeout = "1h"
 
-  vpc_id                          = module.vpc.vpc_id
-  subnets                         = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
-  cluster_endpoint_private_access = "true"
-  cluster_endpoint_public_access  = "true"
+  vpc_id                                         = module.vpc.vpc_id
+  subnets                                        = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
+  cluster_endpoint_private_access                = true
+  cluster_endpoint_public_access                 = true
+  cluster_create_endpoint_private_access_sg_rule = true
+  cluster_endpoint_private_access_cidrs          = ["10.0.0.0/8"]
 
   worker_additional_security_group_ids = var.enable_bastion ? [
     aws_security_group.whitelist.id,
