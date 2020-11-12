@@ -101,14 +101,14 @@ EOF
 
 // Poor man's money saver
 resource "aws_autoscaling_schedule" "tgi-friday" {
-  count = length(module.eks.workers_asg_names)
+  for_each = toset(module.eks.workers_asg_names)
 
   scheduled_action_name  = "friday-off"
   recurrence             = "0 1 * * SAT"
   min_size               = -1
   max_size               = -1
   desired_capacity       = 0
-  autoscaling_group_name = element(module.eks.workers_asg_names, count.index)
+  autoscaling_group_name = each.key
 }
 
 resource "aws_autoscaling_schedule" "monday-im-in-love" {
