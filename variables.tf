@@ -66,16 +66,6 @@ variable "worker_groups" {
   ]
 }
 
-variable "extra_policy_arn" {
-  type    = string
-  default = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-}
-
-variable "cad3_superuser" {
-  type    = bool
-  default = false
-}
-
 variable "enable_bastion" {
   type    = bool
   default = false
@@ -84,4 +74,10 @@ variable "enable_bastion" {
 variable "ssh_keys" {
   type    = list(string)
   default = []
+}
+
+variable "cad3_superuser" {
+  description = "Create IAM and EKS service account for superuser role"
+  type        = bool
+  default     = false
 }

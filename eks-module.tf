@@ -42,11 +42,11 @@ locals {
 //noinspection MissingModule
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v13.0.0"
+  version         = "v13.2.1"
   cluster_name    = local.cluster_name
   cluster_version = "1.18" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
   tags            = local.eks_tags
-  enable_irsa     = false
+  enable_irsa     = true
 
   cluster_create_timeout = "1h"
   cluster_delete_timeout = "1h"
@@ -123,71 +123,4 @@ resource "aws_autoscaling_schedule" "monday-im-in-love" {
 resource "aws_iam_role_policy_attachment" "workers_AmazonEC2ContainerRegistryPowerUser" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   role       = module.eks.worker_iam_role_name
-}
-
-// TODO maybe more restrictive
-resource "aws_iam_role_policy_attachment" "workers_AmazonRoute53FullAccess" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
-  role       = module.eks.worker_iam_role_name
-}
-
-resource "aws_iam_role_policy_attachment" "workers_extra_policy" {
-  policy_arn = var.extra_policy_arn
-  role       = module.eks.worker_iam_role_name
-}
-
-# TODO: use these policies instead of full Route53 access
-#
-# data "aws_iam_policy_document" "cert-manager-route53" {
-#   statement {
-#     actions = [
-#       "route53:GetChange"
-#     ]
-
-#     resources = [
-#       "arn:aws:route53:::change/${aws_route53_zone.primary.zone_id}",
-#     ]
-#   }
-
-#   statement {
-#     actions = [
-#       "route53:ChangeResourceRecordSets"
-#     ]
-
-#     resources = [
-#       "arn:aws:route53:::hostedzone/${aws_route53_zone.primary.zone_id}",
-#     ]
-#   }
-
-#   statement {
-#     actions = [
-#       "route53:ListHostedZonesByName",
-#     ]
-
-#     resources = [
-#       "*",
-#     ]
-#   }
-# }
-
-# resource "aws_iam_role_policy" "cert-manager-route53" {
-#   name   = "cert-manager-route53"
-#   role   = "${module.eks.worker_iam_role_name}"
-#   policy = "${data.aws_iam_policy_document.cert-manager-route53.json}"
-# }
-
-data "aws_iam_policy_document" "eks-default-role" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/EKS-Role-*",
-    ]
-  }
-}
-
-resource "aws_iam_role_policy" "eks-default-role" {
-  name   = "eks-default-role"
-  role   = module.eks.worker_iam_role_name
-  policy = data.aws_iam_policy_document.eks-default-role.json
 }

@@ -22,10 +22,6 @@ output "vpc" {
   value = module.vpc
 }
 
-output "cluster_name" {
-  value = local.cluster_name
-}
-
 output "eks_cluster" {
   value = module.eks
 }
@@ -44,8 +40,4 @@ output "kubernetes_ca_certificate" {
 
 output "kubernetes_token" {
   value = data.aws_eks_cluster_auth.cluster.token
-}
-
-output "cad3_superuser" {
-  value = var.cad3_superuser ? aws_iam_role.cad3_superuser : []
 }
