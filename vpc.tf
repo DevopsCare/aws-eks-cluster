@@ -26,7 +26,7 @@ locals {
 //noinspection MissingModule
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = ">=2.15.0"
+  version = ">=2.15.0,~>2"
   cidr    = var.vpc_cidr
   name    = local.vpc_name
   tags = merge(
@@ -58,9 +58,13 @@ module "vpc" {
 
   enable_dns_hostnames = true
   enable_dns_support   = true
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_s3_endpoint   = true
+
+  enable_nat_gateway     = true
+  single_nat_gateway     = true
+  one_nat_gateway_per_az = false
+
+  enable_s3_endpoint       = true
+  enable_dynamodb_endpoint = true
 }
 
 resource "aws_security_group" "whitelist" {
