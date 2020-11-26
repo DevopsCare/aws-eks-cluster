@@ -124,3 +124,8 @@ resource "aws_iam_role_policy_attachment" "workers_AmazonEC2ContainerRegistryPow
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   role       = module.eks.worker_iam_role_name
 }
+
+resource "aws_iam_role_policy_attachment" "workers_AmazonSSMManagedInstanceCore" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = module.eks.worker_iam_role_name
+}
