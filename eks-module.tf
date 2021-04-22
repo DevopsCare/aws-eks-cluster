@@ -42,9 +42,9 @@ locals {
 //noinspection MissingModule
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v13.2.1"
+  version         = "v15.1.0"
   cluster_name    = local.cluster_name
-  cluster_version = "1.18" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
+  cluster_version = "1.19" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
   tags            = local.eks_tags
   enable_irsa     = true
 
@@ -76,7 +76,7 @@ module "eks" {
   write_kubeconfig   = true
   config_output_path = "${var.config_output_path}/"
 
-  worker_groups = local.worker_groups
+  worker_groups_launch_template = local.worker_groups
 
 
   workers_group_defaults = {
