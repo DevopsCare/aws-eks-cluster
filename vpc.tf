@@ -79,17 +79,16 @@ resource "aws_security_group" "whitelist" {
     cidr_blocks = var.ip_whitelist
   }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = concat(local.github_meta_hooks, local.atlassian_inbound)
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = concat(local.github_meta_hooks, local.atlassian_inbound)
+  dynamic "ingress" {
+    for_each = [80, 443]
+    content {
+      from_port = ingress.value
+      to_port   = ingress.value
+      protocol  = "tcp"
+      cidr_blocks = concat(
+        var.whitelist_github_hooks ? data.github_ip_ranges.current.hooks : [],
+        var.whitelist_atlassian_outgoing ? local.atlassian_outgoing : [],
+      )
+    }
   }
 }

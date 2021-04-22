@@ -31,6 +31,7 @@ provider "kubernetes" {
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
+data "github_ip_ranges" "current" {}
 
 locals {
   aws_region = data.aws_region.current.name
@@ -54,18 +55,22 @@ locals {
     Environment = "${var.project_prefix}-infra"
   }
 
-  // TODO update from API
-  github_meta_hooks = [
-    "192.30.252.0/22",
-    "185.199.108.0/22",
-    "140.82.112.0/20",
-  ]
-
-  // https://confluence.atlassian.com/bitbucket/what-are-the-bitbucket-cloud-ip-addresses-i-should-use-to-configure-my-corporate-firewall-343343385.html
-  atlassian_inbound = [
-    "18.205.93.0/25",
-    "18.234.32.128/25",
-    "13.52.5.0/25",
+  // https://support.atlassian.com/organization-administration/docs/ip-addresses-and-domains-for-atlassian-cloud-products/#AtlassiancloudIPrangesanddomains-OutgoingConnections
+  atlassian_outgoing = [
+    "13.52.5.96/28",
+    "13.236.8.224/28",
+    "18.136.214.96/28",
+    "18.184.99.224/28",
+    "18.234.32.224/28",
+    "18.246.31.224/28",
+    "52.215.192.224/28",
+    "104.192.137.240/28",
+    "104.192.138.240/28",
+    "104.192.140.240/28",
+    "104.192.142.240/28",
+    "104.192.143.240/28",
+    "185.166.143.240/28",
+    "185.166.142.240/28",
   ]
 }
 

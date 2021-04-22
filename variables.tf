@@ -81,3 +81,13 @@ variable "cad3_superuser" {
   type        = bool
   default     = false
 }
+
+variable "whitelist_github_hooks" {
+  type    = bool
+  default = true
+}
+
+variable "whitelist_atlassian_outgoing" {
+  type    = bool
+  default = false
+}
