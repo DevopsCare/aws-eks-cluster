@@ -22,7 +22,7 @@ resource "kubernetes_storage_class" "ebs-sc" {
   volume_binding_mode    = "WaitForFirstConsumer"
   allow_volume_expansion = true
   parameters = {
-    "csi.storage.k8s.io/fsType" = "xfs"
+    "csi.storage.k8s.io/fstype" = "xfs"
     "type"                      = "gp3"
   }
 }
