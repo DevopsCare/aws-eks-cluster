@@ -28,5 +28,9 @@ terraform {
     null = {
       source = "hashicorp/null"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 4.0"
+    }
   }
 }
