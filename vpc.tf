@@ -26,7 +26,7 @@ locals {
 //noinspection MissingModule
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = ">=2.70.0,~>2"
+  version = "~> 2.70"
   cidr    = var.vpc_cidr
   name    = local.vpc_name
   tags = merge(
