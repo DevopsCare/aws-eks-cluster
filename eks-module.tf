@@ -20,7 +20,7 @@ locals {
 
   worker_groups = flatten([
     for group in var.worker_groups : [
-      for subnet in module.vpc.private_subnets :
+      for az, subnet in zipmap(module.vpc.azs, module.vpc.private_subnets):
       merge(group, {
         subnets = [subnet]
         tags = [
@@ -33,7 +33,12 @@ locals {
             "key"                 = "k8s.io/cluster-autoscaler/${local.cluster_name}"
             "propagate_at_launch" = "false"
             "value"               = "true"
-          }
+          },
+          {
+            "key"                 = "k8s.io/cluster-autoscaler/node-template/label/topology.ebs.csi.aws.com/zone"
+            "propagate_at_launch" = "false"
+            "value"               = az
+          },
         ]
       })
   ]])
