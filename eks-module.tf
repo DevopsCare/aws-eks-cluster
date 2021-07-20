@@ -20,7 +20,7 @@ locals {
 
   worker_groups = flatten([
     for group in var.worker_groups : [
-      for az, subnet in zipmap(module.vpc.azs, module.vpc.private_subnets):
+      for az, subnet in zipmap(module.vpc.azs, module.vpc.private_subnets) :
       merge(group, {
         subnets = [subnet]
         tags = [
@@ -44,10 +44,9 @@ locals {
   ]])
 }
 
-//noinspection MissingModule
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v15.1.0"
+  version         = "v17.1.0"
   cluster_name    = local.cluster_name
   cluster_version = "1.19" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
   tags            = local.eks_tags
@@ -78,8 +77,8 @@ module "eks" {
       groups   = ["system:masters"]
   }]
 
-  write_kubeconfig   = true
-  config_output_path = "${var.config_output_path}/"
+  write_kubeconfig       = true
+  kubeconfig_output_path = "${var.config_output_path}/"
 
   worker_groups_launch_template = local.worker_groups
 
