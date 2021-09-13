@@ -95,8 +95,7 @@ resource "aws_security_group" "whitelist" {
       to_port   = ingress.value
       protocol  = "tcp"
       cidr_blocks = concat(
-        // TODO: Remove after https://github.com/integrations/terraform-provider-github/issues/883 is fixed
-        var.whitelist_github_hooks ? [for block in data.github_ip_ranges.current.hooks : block if length(regexall("::", block)) == 0] : [],
+        var.whitelist_github_hooks ? data.github_ip_ranges.current.hooks_ipv4 : [],
         var.whitelist_atlassian_outgoing ? local.atlassian_outgoing : [],
       )
     }
