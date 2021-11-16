@@ -37,6 +37,21 @@ locals {
           {
             "key"                 = "k8s.io/cluster-autoscaler/node-template/label/topology.ebs.csi.aws.com/zone"
             "propagate_at_launch" = "false"
+            "value"               = subnet.availability_zone
+          },
+          {
+            "key"                 = "k8s.io/cluster-autoscaler/node-template/label/failure-domain.beta.kubernetes.io/zone"
+            "propagate_at_launch" = "false"
+            "value"               = subnet.availability_zone
+          },
+          {
+            "key"                 = "k8s.io/cluster-autoscaler/node-template/label/failure-domain.beta.kubernetes.io/region"
+            "propagate_at_launch" = "false"
+            "value"               = data.aws_region.current.name
+          },
+          {
+            "key"                 = "k8s.io/cluster-autoscaler/node-template/label/topology.ebs.csi.aws.com/zone"
+            "propagate_at_launch" = "false"
             "value"               = az
           },
         ]
