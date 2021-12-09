@@ -15,13 +15,8 @@
 */
 
 data "aws_subnet" "subnets" {
-  for_each = data.aws_subnet_ids.nodes.ids
-  id = each.key
-}
-
-data "aws_subnet" "subnets" {
-  for_each = data.aws_subnet_ids.nodes.ids
-  id = each.key
+  for_each = toset(module.vpc.private_subnets)
+  id       = each.key
 }
 
 locals {

@@ -20,9 +20,9 @@ locals {
 
   worker_groups = flatten([
     for group in var.worker_groups : [
-      for az, subnet in zipmap(module.vpc.azs, module.vpc.private_subnets) :
+      for subnet in data.aws_subnet.subnets :
       merge(group, {
-        subnets = [subnet]
+        subnets = [subnet.id]
         tags = [
           {
             "key"                 = "k8s.io/cluster-autoscaler/enabled"
@@ -48,11 +48,6 @@ locals {
             "key"                 = "k8s.io/cluster-autoscaler/node-template/label/failure-domain.beta.kubernetes.io/region"
             "propagate_at_launch" = "false"
             "value"               = data.aws_region.current.name
-          },
-          {
-            "key"                 = "k8s.io/cluster-autoscaler/node-template/label/topology.ebs.csi.aws.com/zone"
-            "propagate_at_launch" = "false"
-            "value"               = az
           },
         ]
       })
