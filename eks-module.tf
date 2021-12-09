@@ -61,9 +61,9 @@ locals {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v17.1.0"
+  version         = "v17.18.0"
   cluster_name    = local.cluster_name
-  cluster_version = "1.19" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
+  cluster_version = "1.20" # https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html
   tags            = local.eks_tags
   enable_irsa     = true
 
