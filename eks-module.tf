@@ -15,8 +15,7 @@
 */
 
 locals {
-  kubectl_assume_role_args = split(",", var.kubectl_assume_role != "" ? join(",", ["\"-r\"", "\"${var.kubectl_assume_role}\""]) : "", )
-  cluster_name             = "${var.project_prefix}-eks-cluster"
+  cluster_name = "${var.project_prefix}-eks-cluster"
 
   worker_groups = flatten([
     for group in var.worker_groups : [

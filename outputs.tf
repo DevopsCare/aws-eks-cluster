@@ -26,19 +26,10 @@ output "eks_cluster" {
   value = module.eks
 }
 
-output "kubeconfig_filename" {
-  value = module.eks.kubeconfig_filename
-}
-
 output "kubernetes_host" {
-  value = data.aws_eks_cluster.cluster.endpoint
+  value = module.eks.cluster_endpoint
 }
 
 output "kubernetes_ca_certificate" {
-  value = data.aws_eks_cluster.cluster.certificate_authority.0.data
-}
-
-output "kubernetes_token" {
-  value     = data.aws_eks_cluster_auth.cluster.token
-  sensitive = true
+  value = base64decode(module.eks.cluster_certificate_authority_data)
 }

@@ -28,8 +28,6 @@ variable "ip_whitelist" {
   default = []
 }
 
-variable "config_output_path" {}
-
 variable "kubectl_assume_role" {
   type    = string
   default = ""
