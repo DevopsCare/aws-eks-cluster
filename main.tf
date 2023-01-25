@@ -47,11 +47,6 @@ locals {
     Environment = "${var.project_prefix}-infra"
   }
 
-  bastion_tags = {
-    Name        = "${var.project_prefix}-eks-bastion"
-    Environment = "${var.project_prefix}-infra"
-  }
-
   // https://support.atlassian.com/organization-administration/docs/ip-addresses-and-domains-for-atlassian-cloud-products/#AtlassiancloudIPrangesanddomains-OutgoingConnections
   atlassian_outgoing = [
     "13.52.5.96/28",

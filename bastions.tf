@@ -14,116 +14,61 @@
 * limitations under the License.
 */
 
-data "aws_ami" "amazon-linux" {
-  most_recent = true
+module "ec2_bastion" {
+  source  = "cloudposse/ec2-bastion-server/aws"
+  version = "0.30.1"
 
-  filter {
-    name   = "name"
-    values = ["amzn-ami-*"]
-  }
+  enabled = var.enable_bastion
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
+  instance_type = "t4g.nano"
+  ami_filter    = { name = ["amzn2-ami-hvm-2.*-arm64-gp2"] }
+  subnets       = module.vpc.public_subnets
+  key_name      = var.key_name
+  vpc_id        = module.vpc.vpc_id
 
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+  user_data = [
+    "sudo amazon-linux-extras install epel -y",
+    "sudo yum -y install fail2ban || sudo yum -y install fail2ban",
+    "sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local",
+    "sudo sed -i \"s/^\\[sshd\\]/[sshd]\\nenabled=true/\" /etc/fail2ban/jail.local",
+    "sudo systemctl enable --now fail2ban",
+    "sudo systemctl restart fail2ban",
 
-  # Amazon
-  owners = ["137112412989"]
-}
-
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  # Canonical
-  owners = ["099720109477"]
-}
-
-resource "aws_instance" "bastion" {
-  count         = var.enable_bastion ? 1 : 0
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.nano"
-  subnet_id     = module.vpc.public_subnets[0]
-
-  vpc_security_group_ids = [
-    aws_security_group.bastion_sg[count.index].id,
-    aws_security_group.bastion_incoming_ssh[count.index].id,
+    "sudo pip3 install pproxy",
+    "sudo /usr/local/bin/pproxy --daemon"
   ]
 
-  key_name = var.key_name
-  user_data = templatefile("${path.module}/templates/bastion_ssh_keys.sh.tmpl", {
-    ssh_keys = var.ssh_keys
-  })
-  tags = local.bastion_tags
+  security_group_rules = [
+    {
+      type        = "egress"
+      from_port   = 0
+      to_port     = 0
+      protocol    = -1
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow all outbound traffic"
+    },
+    {
+      type        = "ingress"
+      from_port   = 0
+      to_port     = 0
+      protocol    = -1
+      cidr_blocks = var.ip_whitelist
+      description = "Allow whitelisted inbound"
+    },
+    {
+      type        = "ingress"
+      protocol    = "tcp"
+      from_port   = 22
+      to_port     = 22
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow inbound to SSH"
+    }
+  ]
 
-  lifecycle {
-    ignore_changes = [ami]
-  }
-}
+  associate_public_ip_address = true
+  zone_id                     = data.aws_route53_zone.project_fqdn.zone_id
+  host_name                   = "bastion"
 
-resource "aws_security_group" "allow_ssh_from_bastion" {
-  name        = "${var.project_prefix}-eks-bastion_ssh_access"
-  description = "Allow SSH from bastion"
-  vpc_id      = module.vpc.vpc_id
-  count       = var.enable_bastion ? 1 : 0
-
-  ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_sg[count.index].id]
-  }
-
-  egress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_sg[count.index].id]
-  }
-}
-
-resource "aws_security_group" "bastion_incoming_ssh" {
-  name        = "${var.project_prefix}-eks-bastion_incoming_ssh"
-  description = "Allow SSH to bastion from world"
-  vpc_id      = module.vpc.vpc_id
-  count       = var.enable_bastion ? 1 : 0
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = var.ip_whitelist
-  }
-}
-
-resource "aws_security_group" "bastion_sg" {
-  name        = "${var.project_prefix}-eks-bastion_sg"
-  description = "Bastion SG"
-  vpc_id      = module.vpc.vpc_id
-  count       = var.enable_bastion ? 1 : 0
-
-  egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = -1
-
-    security_groups = [
-      module.eks.worker_security_group_id,
-    ]
-  }
+  name        = "bastion"
+  environment = "${var.project_prefix}-infra"
 }
