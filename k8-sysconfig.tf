@@ -42,11 +42,13 @@ resource "kubernetes_cluster_role_binding" "eks-admin--cluster-admin" {
   }
 }
 
-resource "null_resource" "gp2" {
-  provisioner "local-exec" {
-    command = <<-EOT
-      kubectl patch --kubeconfig ${var.config_output_path}/kubeconfig_${var.project_prefix}-eks-cluster storageclass gp2 -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
-EOT
-
+resource "kubernetes_annotations" "storageclass_gp2_non-default" {
+  api_version = "storage.k8s.io/v1"
+  kind        = "StorageClass"
+  metadata {
+    name = "gp2"
+  }
+  annotations = {
+    "storageclass.kubernetes.io/is-default-class" = "false"
   }
 }
