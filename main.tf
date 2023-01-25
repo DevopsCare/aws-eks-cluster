@@ -30,6 +30,10 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "github_ip_ranges" "current" {}
 
+data "aws_route53_zone" "project_fqdn" {
+  name = var.project_fqdn
+}
+
 locals {
   aws_region = data.aws_region.current.name
   vpc_name   = "${var.project_prefix}-vpc"

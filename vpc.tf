@@ -81,6 +81,7 @@ resource "aws_security_group" "whitelist" {
     to_port     = 0
     protocol    = -1
     cidr_blocks = var.ip_whitelist
+    description = "Whitelisted IPs (var.whitelist)"
   }
 
   dynamic "ingress" {
